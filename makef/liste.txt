@@ -1,0 +1,11 @@
+
+0 : ../Source/editor/PluginEditor.cc
+ 1 : ../Source/processor/PluginProcessor.h
+ 2 : ../Source/processor/PluginProcessor.cc
+ 3 : ../Source/editor/PluginEditor.h
+ 4 : ../Source/JuceHeader.h
+ 3 : ../Source/editor/manager.h
+ 4 : ../Source/editor/manager.cc
+ 5 : ../Source/com.h
+ 6 : ../Source/com.cc
+ 
