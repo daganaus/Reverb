@@ -46,17 +46,24 @@ public:
 	
 
 	mutex mtx;  //mutex for communications process <-> editor. For each plugin. Taken by each midi_event thread.
-	
 
+	int opt_sound = 0; // copy of a variable in manager.h
+
+
+	
 	vector<uint8> Mes; // use to construct many midi messages. We reserve some memory.
 	
 
-	high_resolution_clock::time_point t0; // initial time point, for use of  precise timing. Set in manager.cc
+//	high_resolution_clock::time_point t0; // initial time point, for use of  precise timing. Set in manager.cc
 
 	
-	double 	Date_from_start_in_s();
+//	double 	Date_from_start_in_s();
+	void   Print_Midi_Messages(MidiBuffer&  midi_buf);
 
+	
+	int Nb = 0; // number of blocks from the start
 
+	
 
 	//---- parameters, saved by the DAW.
 	Parameters *params = nullptr; // in com.h and com.cc. Set in the processor constructor

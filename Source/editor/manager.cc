@@ -21,7 +21,7 @@ Manager::~Manager()
 
 
 //========================
-double 	Manager::Date_from_start() //date from t0 in sec.
+double 	Manager::Date_from_start_in_sec() //date from t0 in sec.
 {
 	auto t2 = high_resolution_clock::now(); // measure of time 
 	return 		duration_cast<duration<double>>(t2 - t0).count(); // duration in sec.

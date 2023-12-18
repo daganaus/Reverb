@@ -127,7 +127,7 @@ void Processor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
-	t0 = high_resolution_clock::now(); // mesure du "time point 0"
+	//t0 = high_resolution_clock::now(); // mesure du "time point 0"
 }
 //==============================================================================
 void Processor::releaseResources()
@@ -145,11 +145,52 @@ bool Processor::isBusesLayoutSupported (const BusesLayout& layouts) const
 }
 #endif
 
-//========================
-double 	Processor::Date_from_start_in_s()
+
+//==================================
+void   Processor::Print_Midi_Messages(MidiBuffer&  midi_buf)
 {
-	auto t2 = high_resolution_clock::now(); // measure of time 
-	return 		duration_cast<duration<double>>(t2 - t0).count(); // duration in sec.
+	if(midi_buf.getNumEvents() == 0)
+		return;
+
+	if(manager == nullptr)
+		return;
+	//------------- prepare the output
+	
+	ostringstream s;
+	s<<"----------------------\n"<<endl;
+	s<<"list of messages of size ="<<midi_buf.getNumEvents()<<endl;
+
+
+	for (const MidiMessageMetadata &metadata : midi_buf) // loop on input midi messages
+	{
+		MidiMessage mes = metadata.getMessage();
+//		s<<"mes.getDescription ()="<<mes.getDescription()<<endl;
+//		s<<"mes.size ="<<mes.getRawDataSize()<<endl;
+
+		const uint8* p_mes =  mes.getRawData();
+		Mes.assign(p_mes, p_mes + mes.getRawDataSize());
+		for(int i=0; i<Mes.size(); i++)
+			s<< hex << setw(2) << setfill('0')<<Mes[i]<<",";
+		//double t = mes.getTimeStamp();
+		double t = manager->Date_from_start_in_sec();
+		s<<"\t"<< t; // time from start 
+		s<<endl;
+	
+	}
+
+//	cout<<s.str(); 
+
+	if(manager->mtx_s_MM.try_lock())
+	{
+		size_t N = manager->s_MM.size();
+		if(N > 10000) // if string too large,
+			manager->s_MM.erase(0, N - 9000);  // we let the last 9000
+			
+		manager->s_MM.append(s.str());
+		manager->changes_MM.store(true);  // ask to refresh display
+		manager->mtx_s_MM.unlock();
+	}
+	
 }
 
 
@@ -162,11 +203,42 @@ So beware of this +/-1 shift.
 Rem: this function is in the Processor Thread.
 
  */
-void Processor::processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
+void Processor::processBlock(AudioBuffer<float>& audio_buffer, MidiBuffer& midi_buffer)
 {
-	//---- measures time and latency
-	double t_begin = Date_from_start_in_s(); // time , begin of block process
+	//---- affiche midi messages
+	Print_Midi_Messages(midi_buffer);
+
+
+	//--- genere un son de sinus à 440 Hz.
+	if(manager != nullptr && manager->opt_sound == 1)
+	{
+		
+		int N = getSampleRate(); // nombre echantillons / sec.
+		int n = audio_buffer.getNumSamples(); // nombre echantillons dans le buffer
+		int nchan = audio_buffer.getNumChannels(); // 1: mono, 2: stereo
+//	cout<<" nchan="<<nchan<<" N="<<N<<" n="<<n<<endl;
+
 	
+		for (int ch = 0; ch < nchan; ch++)
+		{
+			// Récupérer le pointeur d'écriture pour le canal spécifié
+			float* bufferPtr = audio_buffer.getWritePointer(ch);
+
+			double f = 440; // 440Hz
+		
+			for (int i = 0; i< n; i++)
+			{
+				double t = (i + Nb * n) /double (N); // time from the start
+						
+				bufferPtr[i] = 0.1* sin(2*M_PI*f * t); // il est  deconseille d'utiliser sin() ici.
+			}
+	   
+		}
+
+	}
+	
+	Nb = Nb + 1;
+//	cout<<"Nb="<<Nb<<flush;
 }
 
 //==============================================================================

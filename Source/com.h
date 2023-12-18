@@ -37,6 +37,25 @@ public:
 		}
 };
 
+//==============================================================================
+// A Window
+class TCanvas_Manager_s_MM : public juce::DocumentWindow
+{
+public:	
+    Com * p_com = nullptr;
+    CodeEditorComponent *p_editor = nullptr;
+	TCanvas_Manager_s_MM(Com *p_i, const juce::String &name, juce::Colour backgroundColour, int requiredButtons, bool addToDesktop=true);
+	~TCanvas_Manager_s_MM() override;
+
+    int status = 0; //0 : internal, 1: external
+	void resized() override;
+	void moved() override;
+	void paint(juce::Graphics& g) override;
+	void closeButtonPressed();
+
+//----To detect leak memory : Put class name---------------
+	JUCE_LEAK_DETECTOR (TCanvas_Manager_s_MM)
+};
 
 //-- Below is the list of 2 windows for each tab window + ZC.
 
@@ -89,17 +108,27 @@ public:
   //--- list of objects in this zone
 
 	//-- from the instruction of class: Manager: 
-    // int test = 3;   // make_gui =  HS(ZC, 0, 10) texxt ="test:"    help ="test"
-    juce::Slider *Manager_test;
-    juce::Label *Manager_test_text;
-    juce::Label *Manager_test_texte;
+    // string s_MM = "abc"; // make_gui =  nl Editor(ZC, "Midi messages")
+    juce::TextButton *Manager_s_MM_button;
+    juce::Label *Manager_s_MM_text;
+    TCanvas_Manager_s_MM *Manager_s_MM = nullptr;
+    void Show_Hide_Window_Manager_s_MM();
+    CodeDocument Manager_s_MM_code;
+
+	//-- from the instruction of class: Manager: 
+    // int opt_sound = 0; //  make_gui =  C(ZC) texxt ="opt_sound:"    help ="1: create a sound, 0: silence"
+    juce::ToggleButton *Manager_opt_sound;
+    juce::Label *Manager_opt_sound_text;
+    juce::Label *Manager_opt_sound_texte;
 
 	//-- from the instruction of class: Manager: 
     // void Loop_manager();  // make_gui = TT(100)
 
 	//-- transfert of values --------
-    void Met_a_jour_Manager_test();  //  c++ value --> widget value
-    void Process_message_Manager_test();  //  widget value --> c++ value
+    void Met_a_jour_Manager_s_MM();  //  c++ value --> widget value
+    void Process_message_Manager_s_MM();  //  widget value --> c++ value
+    void Met_a_jour_Manager_opt_sound();  //  c++ value --> widget value
+    void Process_message_Manager_opt_sound();  //  widget value --> c++ value
 
 //----To detect leak memory---------------
 JUCE_LEAK_DETECTOR (Com)
@@ -121,6 +150,7 @@ public:
 	Com *p_com = nullptr;
 
 	//.... parameters of objects in com.h
+	int Manager_s_MM_cx = 20, Manager_s_MM_cy = 20, Manager_s_MM_wx = 600,  Manager_s_MM_wy = 600;
 
 //........
     Manager *p_Manager;

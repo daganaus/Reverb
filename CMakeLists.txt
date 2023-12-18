@@ -45,6 +45,8 @@ target_sources(Template
 	Source/editor/manager.cc
 	Source/com.cc)
 
+
+  
 target_include_directories(Template PRIVATE ".")
 
 # `target_compile_definitions` adds some preprocessor definitions to our target. In a Projucer

@@ -40,7 +40,16 @@ public:
     Processor *process = nullptr;
     
 
-	int test = 3;   // make_gui =  HS(ZC, 0, 10) texxt ="test:"    help ="test"
+	
+	//-- GUI editor to display the messages: 
+	string s_MM = "abc"; // make_gui =  nl Editor(ZC, "Midi messages")
+	mutex mtx_s_MM; // because s_MM is shared between process and GUI
+	atomic<bool> changes_MM = false; // 1: ask to refresh display
+
+	//---
+	int opt_sound = 0; //  make_gui =  C(ZC) texxt ="opt_sound:"    help ="1: create a sound, 0: silence"
+
+	
 	
    //----------
 	// transfer data tun to tun with a mutex. Output:  0 if OK. 1, if not
@@ -61,7 +70,7 @@ public:
 	
 	high_resolution_clock::time_point t0; // initial time point, for use of  precise timing. Set in manager.cc
 
-	double 	Date_from_start(); //date from t0 in sec. 
+	double 	Date_from_start_in_sec(); //date from t0 in sec. 
 	
 
 
