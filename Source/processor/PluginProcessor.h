@@ -8,6 +8,12 @@
 
 #pragma once
 
+
+
+#define _USE_MATH_DEFINES // for windows VS
+#include <math.h>
+
+
 #include "Source/JuceHeader.h"
 #include "Source/com.h"
 
