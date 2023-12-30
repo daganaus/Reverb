@@ -28,7 +28,7 @@ Processor::Processor()
                        .withInput  ("Input",  AudioChannelSet::mono(), true) // @@ put stereo or  mono?
 //					   .withInput("Sidechain", AudioChannelSet::mono(), true)
                       #endif
-                       .withOutput ("Output", AudioChannelSet::stereo(), true)
+                       .withOutput ("Output", AudioChannelSet::mono(), true)
                      #endif
                        )
 #endif
