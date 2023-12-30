@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Source/JuceHeader.h"

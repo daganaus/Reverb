@@ -9,7 +9,7 @@ using namespace juce;
 
 #include "Source/editor/manager.h"
 
-//-- Below is the list of 2 windows for each tab window + ZC, named: Page_ZT_j, with j=0->0
+//-- Below is the list of 3 windows for each tab window + ZC, named: Page_ZT_j, with j=0->1
 
 
 //====Constructor =========================================
@@ -22,7 +22,7 @@ Page_ZT_0::Page_ZT_0(Com *p_i)
 
 
    //-- from the instruction of class: Manager: 
-   // string s_MM = "abc"; // make_gui =  nl Editor(ZC, "Midi messages")
+   // string s_MM; // make_gui =  nl Editor(ZC, "Midi messages")
 
    p_com->Manager_s_MM_text = new juce::Label();
    p_com->Manager_s_MM_text->setText("", juce::dontSendNotification);
@@ -49,6 +49,13 @@ Page_ZT_0::Page_ZT_0(Com *p_i)
    p_com->Manager_opt_sound_texte = new juce::Label();
    p_com->Manager_opt_sound_texte->setText("", juce::dontSendNotification);
    addAndMakeVisible (p_com->Manager_opt_sound_texte);
+
+   tab = 	new juce::TabbedComponent(juce::TabbedButtonBar::TabsAtTop);
+   auto colour = findColour (ResizableWindow::backgroundColourId);
+   tab->addTab("Monitor", colour, new Page_ZT_1(p_com), true);
+   tab->setLookAndFeel(&customLookAndFeel);
+   addAndMakeVisible (tab);
+
    if(p_com->verbose >= 1 )
      cout<<"end of Page_ZT_0()"<<endl;
 
@@ -65,6 +72,9 @@ Page_ZT_0::~Page_ZT_0()
    delete p_com->Manager_opt_sound_text;
    delete p_com->Manager_opt_sound;
    delete p_com->Manager_opt_sound_texte;
+
+   delete tab;
+
 }
 
 //=============================================
@@ -78,11 +88,85 @@ void Page_ZT_0::resized()
    p_com->Manager_opt_sound_text->setBounds(172, 10, 80, 20 ); //  (x, y, width, height)
    p_com->Manager_opt_sound->setBounds(252, 10, 30, 20 ); //  (x, y, width, height)
    p_com->Manager_opt_sound_texte->setBounds(282, 10, 12, 20 ); //  (x, y, width, height)
+
+   tab->setBounds(0, 40, 512, 65);// x,y,w,h
+
 }
 
 //=============================================
 // paint() function is where all custom shapes and GUI elements are drawn to the window.
 void Page_ZT_0::paint(juce::Graphics& g)
+{
+}
+
+//====Constructor =========================================
+Page_ZT_1::Page_ZT_1(Com *p_i)
+{
+   p_com = p_i;
+   p_com->p_Tab_Monitor = this;
+   if(p_com->verbose >= 1 )
+     cout<<"Page_ZT_1()"<<endl;
+
+
+   //-- from the instruction of class: Manager: 
+   // double latency = 0; // make_gui = nl PB(ZT("Monitor"), 0, 1.)  texxt="latency max:"   help = "Maximum latency of the last events, percentage of available time for the processor"
+   p_com->Manager_latency_text = new juce::Label();
+   p_com->Manager_latency_text->setText("latency max:", juce::dontSendNotification);
+   addAndMakeVisible (p_com->Manager_latency_text);
+   p_com->Manager_latency_x = 0;
+   p_com->Manager_latency = new juce::ProgressBar(p_com->Manager_latency_x);
+   p_com->Manager_latency->setTooltip("Maximum latency of the last events, percentage of available time for the processor");
+   addAndMakeVisible (p_com->Manager_latency);
+   p_com->Manager_latency_texte = new juce::Label();
+   p_com->Manager_latency_texte->setText("", juce::dontSendNotification);
+   addAndMakeVisible (p_com->Manager_latency_texte);
+
+   //-- from the instruction of class: Manager: 
+   // double latency_mean = 0; // make_gui =  PB(ZT("Monitor"), 0, 1.)  texxt="latency mean:"   help = "Mean latency of the last events, averaged over the last 1000 blocks"
+   p_com->Manager_latency_mean_text = new juce::Label();
+   p_com->Manager_latency_mean_text->setText("latency mean:", juce::dontSendNotification);
+   addAndMakeVisible (p_com->Manager_latency_mean_text);
+   p_com->Manager_latency_mean_x = 0;
+   p_com->Manager_latency_mean = new juce::ProgressBar(p_com->Manager_latency_mean_x);
+   p_com->Manager_latency_mean->setTooltip("Mean latency of the last events, averaged over the last 1000 blocks");
+   addAndMakeVisible (p_com->Manager_latency_mean);
+   p_com->Manager_latency_mean_texte = new juce::Label();
+   p_com->Manager_latency_mean_texte->setText("", juce::dontSendNotification);
+   addAndMakeVisible (p_com->Manager_latency_mean_texte);
+   if(p_com->verbose >= 1 )
+     cout<<"end of Page_ZT_1()"<<endl;
+
+}
+
+//====  Destructor =========================================
+Page_ZT_1::~Page_ZT_1()
+{
+
+   delete p_com->Manager_latency_text;
+   delete p_com->Manager_latency;
+   delete p_com->Manager_latency_texte;
+   delete p_com->Manager_latency_mean_text;
+   delete p_com->Manager_latency_mean;
+   delete p_com->Manager_latency_mean_texte;
+}
+
+//=============================================
+// resized() that is called once at the initialisation of the window and every time the window is resized by the user (if resizing is enabled). This is a good place to set the size and position of widgets so they can be positioned relative to the window bounds.
+void Page_ZT_1::resized()
+{
+
+   p_com->Manager_latency_text->setBounds(12, 10, 96, 20 ); //  (x, y, width, height)
+   p_com->Manager_latency->setBounds(108, 10, 120, 20 ); //  (x, y, width, height)
+   p_com->Manager_latency_texte->setBounds(228, 10, 12, 20 ); //  (x, y, width, height)
+
+   p_com->Manager_latency_mean_text->setBounds(264, 10, 104, 20 ); //  (x, y, width, height)
+   p_com->Manager_latency_mean->setBounds(368, 10, 120, 20 ); //  (x, y, width, height)
+   p_com->Manager_latency_mean_texte->setBounds(488, 10, 12, 20 ); //  (x, y, width, height)
+}
+
+//=============================================
+// paint() function is where all custom shapes and GUI elements are drawn to the window.
+void Page_ZT_1::paint(juce::Graphics& g)
 {
 }
 //======================
@@ -103,6 +187,8 @@ Com::Com(Editor *p_i, Manager *pManager)
    //.....  c++ variables -> widget
    Met_a_jour_Manager_s_MM();
    Met_a_jour_Manager_opt_sound();
+   Met_a_jour_Manager_latency();
+   Met_a_jour_Manager_latency_mean();
 }
 //===========
 Com::~Com()
@@ -114,7 +200,7 @@ Com::~Com()
 void Com::resized()
 {
    p_Tab_ZC->setBounds(0, 0, p_e->getWidth(), p_e->getHeight());
-   p_e->setSize (326, 100); // resize the main window
+   p_e->setSize (512, 105); // resize the main window
 }
 //=============
 void Com::timerCallback(int ID)
@@ -144,6 +230,36 @@ void Com::Met_a_jour_Manager_opt_sound()
        	Manager_opt_sound->setToggleState(false, juce::dontSendNotification);
 }
 //===================
+// function to transfert c++ variable -> widget variable
+// will call Process_Manager_latency()
+void Com::Met_a_jour_Manager_latency()
+{
+	if( Manager_latency == nullptr)
+		return;
+	double x = 0; //in [0,1];
+	x = (p_Manager->latency - 0) / double(1);
+	if(x>1)
+	   x=1;
+	if(x<0)
+	   x=0;
+	Manager_latency_x = x;
+}
+//===================
+// function to transfert c++ variable -> widget variable
+// will call Process_Manager_latency_mean()
+void Com::Met_a_jour_Manager_latency_mean()
+{
+	if( Manager_latency_mean == nullptr)
+		return;
+	double x = 0; //in [0,1];
+	x = (p_Manager->latency_mean - 0) / double(1);
+	if(x>1)
+	   x=1;
+	if(x<0)
+	   x=0;
+	Manager_latency_mean_x = x;
+}
+//===================
 // function to transfert widget variable -> c++ variable -> parameter
 void Com::Process_message_Manager_s_MM()
 {
@@ -157,6 +273,24 @@ void Com::Process_message_Manager_opt_sound()
             	p_Manager->opt_sound = 1;
          else
             	p_Manager->opt_sound = 0;
+}
+//===================
+// function to transfert widget variable -> c++ variable -> parameter
+void Com::Process_message_Manager_latency()
+{
+	double x = 	Manager_latency_x; //in [0,1];
+	x = x* 1 + 0;
+	Manager_latency_x = x;
+
+}
+//===================
+// function to transfert widget variable -> c++ variable -> parameter
+void Com::Process_message_Manager_latency_mean()
+{
+	double x = 	Manager_latency_mean_x; //in [0,1];
+	x = x* 1 + 0;
+	Manager_latency_mean_x = x;
+
 }
 //===================
 // function to show/hide a window
@@ -183,7 +317,7 @@ void Com::Show_Hide_Window_Manager_s_MM()
 	}
 }
 //===================================
-// from line:string s_MM = "abc"; // make_gui =  nl Editor(ZC, "Midi messages")
+// from line:string s_MM; // make_gui =  nl Editor(ZC, "Midi messages")
 TCanvas_Manager_s_MM::TCanvas_Manager_s_MM(Com *p_i, const juce::String &name, juce::Colour backgroundColour, int requiredButtons, bool addToDesktop) : juce::DocumentWindow(name, juce::Colours::lightgrey, DocumentWindow::allButtons)
 {
     p_com = p_i;
@@ -273,6 +407,8 @@ void Parameters::Save_parameters(Processor * processor, MemoryBlock& destData)
 
 	//... parameters of user's objects
 	xml->setAttribute("Manager_opt_sound",   p_Manager->opt_sound);
+	xml->setAttribute("Manager_latency",   p_Manager->latency);
+	xml->setAttribute("Manager_latency_mean",   p_Manager->latency_mean);
 	processor->copyXmlToBinary(*xml, destData);
 
 //	mtx_params.unlock();
@@ -305,6 +441,14 @@ void Parameters::Load_parameters(Processor * processor, const void* data, int si
 		     if(processor->p_com != nullptr)
 		   	    processor->p_com->Met_a_jour_Manager_opt_sound(); // -> widget variable
         //cout<<"      load     value   p_Manager->opt_sound   = "<<   p_Manager->opt_sound <<endl;
+	   p_Manager->latency  =  xmlState->getDoubleAttribute ("Manager_latency", 0); // name, default value if not found
+	   if(processor->p_com != nullptr)
+		   processor->p_com->Met_a_jour_Manager_latency(); // -> widget variable
+        //cout<<"      load     value   p_Manager->latency   = "<<   p_Manager->latency <<endl;
+	   p_Manager->latency_mean  =  xmlState->getDoubleAttribute ("Manager_latency_mean", 0); // name, default value if not found
+	   if(processor->p_com != nullptr)
+		   processor->p_com->Met_a_jour_Manager_latency_mean(); // -> widget variable
+        //cout<<"      load     value   p_Manager->latency_mean   = "<<   p_Manager->latency_mean <<endl;
         }// if xmlState
 
 //	mtx_params.unlock();

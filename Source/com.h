@@ -57,7 +57,7 @@ public:
 	JUCE_LEAK_DETECTOR (TCanvas_Manager_s_MM)
 };
 
-//-- Below is the list of 2 windows for each tab window + ZC.
+//-- Below is the list of 3 windows for each tab window + ZC.
 
 
 //=============================================
@@ -82,6 +82,28 @@ class Page_ZT_0 : public juce::Component
 JUCE_LEAK_DETECTOR (Page_ZT_0)
 };
 
+//=============================================
+class Page_ZT_1 : public juce::Component 
+{
+ public:
+   Page_ZT_1(Com *p_i);
+   ~Page_ZT_1();
+
+    // resized() that is called once at the initialisation of the window and every time the window is resized by the user (if resizing is enabled).
+    void resized() override;
+    void paint(juce::Graphics& g) override;
+    Com *p_com = nullptr;
+    int ZC_size = 20; // vertical size of zone above tabs
+
+
+    //------------
+    juce::TabbedComponent *tab;
+    CustomTabLookAndFeel customLookAndFeel;
+
+//----To detect leak memory---------------
+JUCE_LEAK_DETECTOR (Page_ZT_1)
+};
+
 //=====================
 // Main class for widgets
 
@@ -104,11 +126,12 @@ public:
 
    //some pointers for easer access to tabs by their full name
 	Page_ZT_0  * p_Tab_ZC;
+	Page_ZT_1  * p_Tab_Monitor;
 
   //--- list of objects in this zone
 
 	//-- from the instruction of class: Manager: 
-    // string s_MM = "abc"; // make_gui =  nl Editor(ZC, "Midi messages")
+    // string s_MM; // make_gui =  nl Editor(ZC, "Midi messages")
     juce::TextButton *Manager_s_MM_button;
     juce::Label *Manager_s_MM_text;
     TCanvas_Manager_s_MM *Manager_s_MM = nullptr;
@@ -124,11 +147,29 @@ public:
 	//-- from the instruction of class: Manager: 
     // void Loop_manager();  // make_gui = TT(100)
 
+	//-- from the instruction of class: Manager: 
+    // double latency = 0; // make_gui = nl PB(ZT("Monitor"), 0, 1.)  texxt="latency max:"   help = "Maximum latency of the last events, percentage of available time for the processor"
+    juce::ProgressBar *Manager_latency;
+    double Manager_latency_x = 0; // value of the ProgressBar
+    juce::Label *Manager_latency_text;
+    juce::Label *Manager_latency_texte;
+
+	//-- from the instruction of class: Manager: 
+    // double latency_mean = 0; // make_gui =  PB(ZT("Monitor"), 0, 1.)  texxt="latency mean:"   help = "Mean latency of the last events, averaged over the last 1000 blocks"
+    juce::ProgressBar *Manager_latency_mean;
+    double Manager_latency_mean_x = 0; // value of the ProgressBar
+    juce::Label *Manager_latency_mean_text;
+    juce::Label *Manager_latency_mean_texte;
+
 	//-- transfert of values --------
     void Met_a_jour_Manager_s_MM();  //  c++ value --> widget value
     void Process_message_Manager_s_MM();  //  widget value --> c++ value
     void Met_a_jour_Manager_opt_sound();  //  c++ value --> widget value
     void Process_message_Manager_opt_sound();  //  widget value --> c++ value
+    void Met_a_jour_Manager_latency();  //  c++ value --> widget value
+    void Process_message_Manager_latency();  //  widget value --> c++ value
+    void Met_a_jour_Manager_latency_mean();  //  c++ value --> widget value
+    void Process_message_Manager_latency_mean();  //  widget value --> c++ value
 
 //----To detect leak memory---------------
 JUCE_LEAK_DETECTOR (Com)

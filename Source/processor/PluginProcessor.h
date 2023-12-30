@@ -50,18 +50,17 @@ public:
 	int opt_sound = 0; // copy of a variable in manager.h
 
 
+	double t = 0;
 	
 	vector<uint8> Mes; // use to construct many midi messages. We reserve some memory.
 	
 
-//	high_resolution_clock::time_point t0; // initial time point, for use of  precise timing. Set in manager.cc
+		//...........
+	high_resolution_clock::time_point t0; // initial time point, for use of  precise timing. Set in manager.cc
+	double 	Date_from_start_in_sec(); //date from t0 in sec.
 
 	
-//	double 	Date_from_start_in_s();
 	void   Print_Midi_Messages(MidiBuffer&  midi_buf);
-
-	
-	int Nb = 0; // number of blocks from the start
 
 	
 

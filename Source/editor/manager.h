@@ -42,7 +42,7 @@ public:
 
 	
 	//-- GUI editor to display the messages: 
-	string s_MM = "abc"; // make_gui =  nl Editor(ZC, "Midi messages")
+	string s_MM; // make_gui =  nl Editor(ZC, "Midi messages")
 	mutex mtx_s_MM; // because s_MM is shared between process and GUI
 	atomic<bool> changes_MM = false; // 1: ask to refresh display
 
@@ -51,10 +51,6 @@ public:
 
 	
 	
-   //----------
-	// transfer data tun to tun with a mutex. Output:  0 if OK. 1, if not
-	void Data_process_to_manager();
-	void Data_manager_to_process();
 	
 //-- constructeur ------------------------
 	Manager();
@@ -63,18 +59,19 @@ public:
 	
 //... fonction qui sera lancee toutes les  100 ms  par dans le thread  GUI
 	void Loop_manager();  // make_gui = TT(100)
-	int cpt_loop =0; // counter 
-	
-	int changes_to_process = 0; // 1 si il y a eu des chgts a transmettre a manager->process. 0 sinon.
-	int changes_to_manager = 0; // 1 si il y a eu des chgts a transmettre a process->manager. 0 sinon.
-	
-	high_resolution_clock::time_point t0; // initial time point, for use of  precise timing. Set in manager.cc
-
-	double 	Date_from_start_in_sec(); //date from t0 in sec. 
 	
 
+	//--- latency of the processor
+	double latency = 0; // make_gui = nl PB(ZT("Monitor"), 0, 1.)  texxt="latency max:"   help = "Maximum latency of the last events, percentage of available time for the processor"
 
-	
+	int T_latency = 10; // period (number of cycles) for display latency in manager.cc,  
+
+
+	double latency_mean = 0; // make_gui =  PB(ZT("Monitor"), 0, 1.)  texxt="latency mean:"   help = "Mean latency of the last events, averaged over the last 1000 blocks"
+	int N_latency = 0; 
+	double  S_latency = 0; 
+
+
 	
 //----To detect leak memory---------------
 	JUCE_LEAK_DETECTOR (Manager)

@@ -45,6 +45,7 @@ Processor::Processor()
 
 //------------
 	Mes.reserve(10);
+	t0 = high_resolution_clock::now(); // measure of time 
 }
 
 //==============================================================================
@@ -151,14 +152,15 @@ void   Processor::Print_Midi_Messages(MidiBuffer&  midi_buf)
 {
 	if(midi_buf.getNumEvents() == 0)
 		return;
-
+	
 	if(manager == nullptr)
 		return;
+
 	//------------- prepare the output
 	
 	ostringstream s;
 	s<<"----------------------\n"<<endl;
-	s<<"list of messages of size ="<<midi_buf.getNumEvents()<<endl;
+	s<<"list of "<< midi_buf.getNumEvents() <<" messages:"<<endl;
 
 
 	for (const MidiMessageMetadata &metadata : midi_buf) // loop on input midi messages
@@ -170,16 +172,18 @@ void   Processor::Print_Midi_Messages(MidiBuffer&  midi_buf)
 		const uint8* p_mes =  mes.getRawData();
 		Mes.assign(p_mes, p_mes + mes.getRawDataSize());
 		for(int i=0; i<Mes.size(); i++)
-			s<< hex << setw(2) << setfill('0')<<Mes[i]<<",";
+			//s<< hex << setw(2) << setfill('0')<<Mes[i]<<",";
+			s<< hex <<(int)Mes[i]<<",";
 		//double t = mes.getTimeStamp();
-		double t = manager->Date_from_start_in_sec();
-		s<<"\t"<< t; // time from start 
+		double t = Date_from_start_in_sec();
+
+		s<<"\tt="<< t; // time from start 
 		s<<endl;
 	
 	}
 
 //	cout<<s.str(); 
-
+	
 	if(manager->mtx_s_MM.try_lock())
 	{
 		size_t N = manager->s_MM.size();
@@ -187,7 +191,7 @@ void   Processor::Print_Midi_Messages(MidiBuffer&  midi_buf)
 			manager->s_MM.erase(0, N - 9000);  // we let the last 9000
 			
 		manager->s_MM.append(s.str());
-		manager->changes_MM.store(true);  // ask to refresh display
+		manager->changes_MM.store(true);  // ask to refresh display in manager.cc
 		manager->mtx_s_MM.unlock();
 	}
 	
@@ -203,11 +207,13 @@ So beware of this +/-1 shift.
 Rem: this function is in the Processor Thread.
 
  */
+
 void Processor::processBlock(AudioBuffer<float>& audio_buffer, MidiBuffer& midi_buffer)
 {
 	//---- affiche midi messages
 	Print_Midi_Messages(midi_buffer);
-
+	//---- measures time and latency
+	double t_begin = Date_from_start_in_sec(); // time , begin of block process
 
 	//--- genere un son de sinus à 440 Hz.
 	if(manager != nullptr && manager->opt_sound == 1)
@@ -228,17 +234,48 @@ void Processor::processBlock(AudioBuffer<float>& audio_buffer, MidiBuffer& midi_
 		
 			for (int i = 0; i< n; i++)
 			{
-				double t = (i + Nb * n) /double (N); // time from the start
+//				double t = (i + Nb * n) /double (N); // time from the start
 						
 				bufferPtr[i] = 0.1* sin(2*M_PI*f * t); // il est  deconseille d'utiliser sin() ici.
+				t = t + 1./N; // increment time
 			}
 	   
 		}
 
 	}
 	
-	Nb = Nb + 1;
-//	cout<<"Nb="<<Nb<<flush;
+
+
+	
+
+	//====  measures time and latency ===================
+
+	double t_end = Date_from_start_in_sec(); // time , end of block process
+
+	double dt = audio_buffer.getNumSamples() / double( getSampleRate());  // mean duration of a block
+
+
+	//... max  latency ....
+	double latency =  (t_end - t_begin) / dt; // ratio
+
+	if(manager != nullptr && mtx.try_lock())
+	{
+
+		if(latency > manager->latency)
+			manager->latency = latency;
+
+		//... mean latency
+		manager->N_latency++;
+		manager->S_latency += (t_end - t_begin);
+	
+		if(manager->N_latency >= 1000)
+		{
+			manager->latency_mean =  manager->S_latency / (1000. * dt);
+			manager->N_latency = 0;
+			manager->S_latency = 0;
+		}
+		mtx.unlock();
+	}
 }
 
 //==============================================================================
@@ -277,6 +314,15 @@ void  Processor::parameterValueChanged (int parameterIndex, float newValue)
 void  Processor::parameterGestureChanged(int parameterIndex, bool gestureIsStarting)
 {
 }
+
+
+//========================
+double 	Processor::Date_from_start_in_sec() //date from t0 in sec.
+{
+	auto t2 = high_resolution_clock::now(); // measure of time 
+	return 		duration_cast<duration<double>>(t2 - t0).count(); // duration in sec.
+}
+
 
 //==============================================================================
 // This creates new instances of the plugin..
