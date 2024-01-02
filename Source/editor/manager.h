@@ -47,7 +47,7 @@ public:
 	atomic<bool> changes_MM = false; // 1: ask to refresh display
 
 	//---
-	int opt_sound = 0; //  make_gui =  C(ZC) texxt ="opt_sound:"    help ="1: create a sound, 0: silence"
+	int opt_sound = 0; //  make_gui =  C(ZC) texxt ="sound:"    help ="1: create a sound, 0: silence"
 
 	
 	
