@@ -45,6 +45,7 @@ class Processor  : public juce::AudioProcessor
 {
 public:
 
+	double t = 0;
 	
 	Com *p_com = nullptr;   // in com.h. Set in the  editor constructor
 
@@ -56,7 +57,6 @@ public:
 	int opt_sound = 0; // copy of a variable in manager.h
 
 
-	double t = 0;
 	
 	vector<uint8> Mes; // use to construct many midi messages. We reserve some memory.
 	
