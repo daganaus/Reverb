@@ -5,12 +5,55 @@ project(Template VERSION 1.0.4)
 # build for Intel (x86_64) and M1 (arm64) architectures
 set(CMAKE_OSX_ARCHITECTURES x86_64;arm64)
 
+
+# set compiler warning level to "basic" warnings only
+if(MSVC)
+	add_compile_options(/W2)
+else()
+	add_compile_options(-Wall)
+endif()
+
+
+# build for Intel (x86_64) and M1 (arm64) architectures
+set(CMAKE_OSX_ARCHITECTURES x86_64;arm64)
+
+
+
 #
 # For the details, see
 #
 # https://github.com/juce-framework/JUCE/blob/master/docs/CMake%20API.md
 #
 find_package(JUCE CONFIG REQUIRED)
+
+
+# On macOS, JUCE emits the warning below. We do what they recommend:
+#
+#	If you are using Link Time Optimisation (LTO), the new linker
+#	introduced in Xcode 15 may produce a broken binary. As a
+#	workaround, add either '-Wl,-weak_reference_mismatches,weak'
+#	or '-Wl,-ld_classic' to your linker flags. Once you've
+#	selected a workaround, you can add
+#	JUCE_SILENCE_XCODE_15_LINKER_WARNING to your preprocessor
+#	definitions to silence this warning.
+#
+if(APPLE AND
+	CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL 15.0 AND
+	CMAKE_C_COMPILER_VERSION VERSION_LESS 15.1)
+	add_link_options(-Wl,-ld_classic)
+	add_compile_definitions(JUCE_SILENCE_XCODE_15_LINKER_WARNING)
+endif()
+
+# Linux needs _GNU_SOURCE for certain functions we use, like dladdr()
+if(CMAKE_SYSTEM MATCHES Linux)
+	add_compile_definitions(_GNU_SOURCE)
+endif()
+
+
+
+
+
+
 
 
 juce_add_plugin(Template
@@ -60,7 +103,9 @@ target_compile_definitions(Template
     PUBLIC
 	JUCE_WEB_BROWSER=0
 	JUCE_USE_CURL=0
-	JUCE_VST3_CAN_REPLACE_VST2=0)
+	JUCE_VST3_CAN_REPLACE_VST2=0
+	SYNTH_NO_DYNAMIC REV_NO_UI	# Disable GUI and license management
+	SYNTH_MIDICTL)			# Allow MIDI control of parameters
 
 # `target_link_libraries` links libraries and JUCE modules to other libraries or executables. Here,
 # we're linking our executable target to the `juce::juce_audio_utils` module. Inter-module
@@ -86,9 +131,51 @@ if(APPLE)
 		LIBRARY DESTINATION Library/Audio/Plug-Ins/VST3
 		COMPONENT VST3)
 
+
+
+	install(TARGETS Template_Standalone
+		BUNDLE DESTINATION "Applications"
+		COMPONENT Standalone)
+
+
 	# most CPACK_xxx vars are guessed from project properties
 	set(CPACK_GENERATOR productbuild)
 	set(CPACK_PACKAGE_VENDOR Fred)
 	include(CPack)
 
+
+
+elseif(UNIX)
+
+	install(TARGETS Template_VST3 
+		LIBRARY DESTINATION "lib/vst3"
+		COMPONENT VST3)
+
+
+
+	install(TARGETS Template_Standalone
+        RUNTIME DESTINATION bin)
+
+
+elseif(WIN32)
+    set(CMAKE_INSTALL_PREFIX "C:/Program Files")  # Modifiez ce chemin si nécessaire
+
+    install(TARGETS Template
+        LIBRARY DESTINATION "VST3"
+        COMPONENT VST3)
+		
+    install(TARGETS Template_Standalone
+        RUNTIME DESTINATION "Template"
+        COMPONENT Standalone)
+
+    # Configure CPack for Windows packaging
+    set(CPACK_GENERATOR "NSIS")  # NSIS est un générateur pour créer des installateurs Windows
+    set(CPACK_PACKAGE_NAME "Template")
+    set(CPACK_PACKAGE_VENDOR "Fred")
+    set(CPACK_PACKAGE_VERSION ${VERSION_CONTENT})  # Utilise la version définie précédemment
+    set(CPACK_PACKAGE_DESCRIPTION "Template plugin for audio processing")
+    set(CPACK_NSIS_INSTALL_ROOT "C:/Program Files")
+    set(CPACK_NSIS_DISPLAY_NAME "Template Audio Plugins")
+    include(CPack)
 endif()
+
