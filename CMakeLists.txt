@@ -158,7 +158,7 @@ elseif(UNIX)
 
 
 elseif(WIN32)
-    set(CMAKE_INSTALL_PREFIX "C:/Program Files")  # Modifiez ce chemin si nécessaire
+    set(CMAKE_INSTALL_PREFIX "C:/Users/faure")  # Modifiez ce chemin si nécessaire
 
     install(TARGETS Template
         LIBRARY DESTINATION "VST3"
@@ -174,7 +174,7 @@ elseif(WIN32)
     set(CPACK_PACKAGE_VENDOR "Fred")
     set(CPACK_PACKAGE_VERSION ${VERSION_CONTENT})  # Utilise la version définie précédemment
     set(CPACK_PACKAGE_DESCRIPTION "Template plugin for audio processing")
-    set(CPACK_NSIS_INSTALL_ROOT "C:/Program Files")
+    set(CPACK_NSIS_INSTALL_ROOT "C:/Users/faure")
     set(CPACK_NSIS_DISPLAY_NAME "Template Audio Plugins")
     include(CPack)
 endif()
