@@ -36,12 +36,3 @@ void Manager::Loop_manager()
 
 }
 
-
-//========================
-void Manager::Display1(juce::Graphics& g)
-{
-}
-//========================
-void Manager::Display2(juce::Graphics& g)
-{
-}

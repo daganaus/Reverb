@@ -66,33 +66,6 @@ Page_ZT_0::Page_ZT_0(Com *p_i)
    p_com->Manager_opt_sound_texte->setText("", juce::dontSendNotification);
    addAndMakeVisible (p_com->Manager_opt_sound_texte);
 
-   //-- from the instruction of class: Manager: 
-   // void Display1(juce::Graphics& g); // make_gui = nl  Window(ZC, "Display1")
-
-   p_com->Manager_Display1_text = new juce::Label();
-   p_com->Manager_Display1_text->setText("", juce::dontSendNotification);
-   addAndMakeVisible (p_com->Manager_Display1_text);
-
-   p_com->Manager_Display1_button = new juce::TextButton();
-   p_com->Manager_Display1_button->setButtonText("Show Display1");
-   p_com->Manager_Display1_button->onClick = [this] { p_com->Process_message_Manager_Display1(); }; // callback
-   addAndMakeVisible (p_com->Manager_Display1_button);
-
-   //-- from the instruction of class: Manager: 
-   // void Display2(juce::Graphics& g); // make_gui =   Window2(ZC, "Display2", 200, 200)
-
-   p_com->Manager_Display2_text = new juce::Label();
-   p_com->Manager_Display2_text->setText("", juce::dontSendNotification);
-   addAndMakeVisible (p_com->Manager_Display2_text);
-
-   p_com->Manager_Display2_button = new juce::TextButton();
-   p_com->Manager_Display2_button->setButtonText("External Display2");
-   p_com->Manager_Display2_button->onClick = [this] { p_com->Process_message_Manager_Display2(); }; // callback
-   addAndMakeVisible (p_com->Manager_Display2_button);
-   p_com->Manager_Display2 = new TCanvas_Manager_Display2(p_i, "Display2", juce::Colour(), 7); // 7:all buttons
-   p_com->Manager_Display2->status = 0; //embeded
-   addAndMakeVisible(p_com->Manager_Display2);
-
    tab = 	new juce::TabbedComponent(juce::TabbedButtonBar::TabsAtTop);
    auto colour = findColour (ResizableWindow::backgroundColourId);
    tab->addTab("Monitor", colour, new Page_ZT_1(p_com), true);
@@ -115,14 +88,6 @@ Page_ZT_0::~Page_ZT_0()
    delete p_com->Manager_opt_sound_text;
    delete p_com->Manager_opt_sound;
    delete p_com->Manager_opt_sound_texte;
-   delete p_com->Manager_Display1_text;
-   delete p_com->Manager_Display1_button;
-   if(p_com->Manager_Display1 != nullptr)
-     delete p_com->Manager_Display1;
-   delete p_com->Manager_Display2_text;
-   delete p_com->Manager_Display2_button;
-   if(p_com->Manager_Display2 != nullptr)
-     delete p_com->Manager_Display2;
 
    delete tab;
 
@@ -140,14 +105,7 @@ void Page_ZT_0::resized()
    p_com->Manager_opt_sound->setBounds(220, 10, 30, 20 ); //  (x, y, width, height)
    p_com->Manager_opt_sound_texte->setBounds(250, 10, 12, 20 ); //  (x, y, width, height)
 
-   p_com->Manager_Display1_text->setBounds(12, 40, 0, 20 ); //  (x, y, width, height)
-   p_com->Manager_Display1_button->setBounds(12, 40, 96, 20 ); //  (x, y, width, height)
-
-   p_com->Manager_Display2_text->setBounds(132, 40, 0, 20 ); //  (x, y, width, height)
-   p_com->Manager_Display2_button->setBounds(132, 40, 96, 20 ); //  (x, y, width, height)
-   p_com->Manager_Display2->setBounds(132, 60, 200, 200 ); //  (x, y, width, height)
-
-   tab->setBounds(0, 270, 512, 65);// x,y,w,h
+   tab->setBounds(0, 40, 512, 65);// x,y,w,h
 
 }
 
@@ -245,8 +203,6 @@ Com::Com(Editor *p_i, Manager *pManager)
    //.....  c++ variables -> widget
    Met_a_jour_Manager_s_MM();
    Met_a_jour_Manager_opt_sound();
-   Met_a_jour_Manager_Display1();
-   Met_a_jour_Manager_Display2();
    Met_a_jour_Manager_latency();
    Met_a_jour_Manager_latency_mean();
 }
@@ -260,7 +216,7 @@ Com::~Com()
 void Com::resized()
 {
    p_Tab_ZC->setBounds(0, 0, p_e->getWidth(), p_e->getHeight());
-   p_e->setSize (512, 335); // resize the main window
+   p_e->setSize (512, 105); // resize the main window
 }
 //=============
 void Com::timerCallback(int ID)
@@ -288,22 +244,6 @@ void Com::Met_a_jour_Manager_opt_sound()
        	Manager_opt_sound->setToggleState(true, juce::dontSendNotification);
     else
        	Manager_opt_sound->setToggleState(false, juce::dontSendNotification);
-}
-//===================
-// function to transfert c++ variable -> widget variable
-// will call Process_Manager_Display1()
-void Com::Met_a_jour_Manager_Display1()
-{
-	if( Manager_Display1 == nullptr)
-		return;
-}
-//===================
-// function to transfert c++ variable -> widget variable
-// will call Process_Manager_Display2()
-void Com::Met_a_jour_Manager_Display2()
-{
-	if( Manager_Display2 == nullptr)
-		return;
 }
 //===================
 // function to transfert c++ variable -> widget variable
@@ -352,18 +292,6 @@ void Com::Process_message_Manager_opt_sound()
 }
 //===================
 // function to transfert widget variable -> c++ variable -> parameter
-void Com::Process_message_Manager_Display1()
-{
-     Show_Hide_Window_Manager_Display1();
-}
-//===================
-// function to transfert widget variable -> c++ variable -> parameter
-void Com::Process_message_Manager_Display2()
-{
-     Show_Hide_Window_Manager_Display2();
-}
-//===================
-// function to transfert widget variable -> c++ variable -> parameter
 void Com::Process_message_Manager_latency()
 {
 	double x = 	Manager_latency_x; //in [0,1];
@@ -403,71 +331,6 @@ void Com::Show_Hide_Window_Manager_s_MM()
 		delete Manager_s_MM;
 		Manager_s_MM = nullptr;
 		Manager_s_MM_button->setButtonText("Show Midi messages");
-	}
-}
-//===================
-// function to show/hide a window
-void Com::Show_Hide_Window_Manager_Display1()
-{
-	//---- open window 
-	if(Manager_Display1 == nullptr)
-	{
-		Manager_Display1 =  new TCanvas_Manager_Display1(this, "Display1", juce::Colour(), 1);
-		auto p = p_e->processor.params; // pointer
-		juce::Rectangle<int> r (p->Manager_Display1_cx , p->Manager_Display1_cy ,p->Manager_Display1_wx ,p->Manager_Display1_wy);
-		Manager_Display1->setBoundsConstrained(r);
-		Manager_Display1->setResizable(true, true);
-		Manager_Display1->setVisible(true);
-		Manager_Display1->setAlwaysOnTop(true);
-		Manager_Display1_button->setButtonText("Close Display1");
-		Met_a_jour_Manager_Display1(); // refresh display
-	}
-	//---- close window 
-	else
-	{
-		delete Manager_Display1;
-		Manager_Display1 = nullptr;
-		Manager_Display1_button->setButtonText("Show Display1");
-	}
-}
-//===================
-// function to show/hide a window
-// we shift: delete -> internal -> external -> delete
-void Com::Show_Hide_Window_Manager_Display2()
-{
-	//---- open window 
-	if(Manager_Display2 == nullptr)  // deleted -> internal
-	{
-	  Manager_Display2 = new TCanvas_Manager_Display2(this, "Display2", juce::Colour(), 7); // 7:all buttons
-	  p_Tab_ZC->addAndMakeVisible(Manager_Display2);
-	  Manager_Display2->setBounds( 132, 60, 200, 200); // x,y,w,h
-	  Manager_Display2->status = 0; //internal
-	  Manager_Display2_button->setButtonText("External Display2");
-	}
-	//----
-	else if(Manager_Display2 != nullptr != 0 && Manager_Display2->status == 0) // internal -> external
-	{
-	  delete Manager_Display2;
-	  Manager_Display2 = nullptr;
-	
-	  //............
-	  Manager_Display2 =  new TCanvas_Manager_Display2(this, "Display2", juce::Colour(), 7);
-	  auto p = p_e->processor.params; // pointer
-	  juce::Rectangle<int> r (p->Manager_Display2_cx , p->Manager_Display2_cy ,p->Manager_Display2_wx ,p->Manager_Display2_wy);
-	  Manager_Display2->setBoundsConstrained(r);
-	  Manager_Display2->setResizable(true, true);
-	  Manager_Display2->setVisible(true);
-	  Manager_Display2->setAlwaysOnTop(true);
-	
-	  Manager_Display2->status = 1; //external
-	  Manager_Display2_button->setButtonText("Delete Display2");
-	}
-	//----
-	else if(Manager_Display2 != nullptr != 0 && Manager_Display2->status == 1) // external -> delete
-	{
-	  delete Manager_Display2;
-	  Manager_Display2 = nullptr;
-	  Manager_Display2_button->setButtonText("Internal Display2");
 	}
 }
 //===================================
@@ -526,98 +389,6 @@ void TCanvas_Manager_s_MM::closeButtonPressed()
 {
   if(p_com != nullptr)
      p_com->Show_Hide_Window_Manager_s_MM();
-}
-//==================
-//===================================
-// from line:void Display1(juce::Graphics& g); // make_gui = nl  Window(ZC, "Display1")
-TCanvas_Manager_Display1::TCanvas_Manager_Display1(Com *p_i, const juce::String &name, juce::Colour backgroundColour, int requiredButtons, bool addToDesktop) : juce::DocumentWindow(name, juce::Colours::lightgrey, DocumentWindow::allButtons)
-{
-    p_com = p_i;
-    setResizable(true, true);
-    auto p = p_com->p_e->processor.params;
-    setBounds(p->Manager_Display1_cx, p->Manager_Display1_cy, p->Manager_Display1_wx, p->Manager_Display1_wy);
-    setUsingNativeTitleBar (true);
-    setVisible (true);
-}
-
-//===================================
-TCanvas_Manager_Display1::~TCanvas_Manager_Display1()
-{
-}
-
-//===================================
-void TCanvas_Manager_Display1::paint(juce::Graphics& g)
-{
-   p_com->p_Manager->Display1(g);
-}
-//==================
-void TCanvas_Manager_Display1::resized()
-{
-	auto p = p_com->p_e->processor.params;
-	// rem: tests are due to initial call with small width (128)??
-    if(getWidth() >= 200)
-       p->Manager_Display1_wx = getWidth();
-    if(getHeight() >= 200)
-       p->Manager_Display1_wy = getHeight();
-}
-//==================
-void TCanvas_Manager_Display1::moved()
-{
-	auto p = p_com->p_e->processor.params;
-    p->Manager_Display1_cx = getX();
-    p->Manager_Display1_cy = getY();
-}
-//==================
-void TCanvas_Manager_Display1::closeButtonPressed()
-{
-  if(p_com != nullptr)
-     p_com->Show_Hide_Window_Manager_Display1();
-}
-//==================
-//===================================
-// from line:void Display2(juce::Graphics& g); // make_gui =   Window2(ZC, "Display2", 200, 200)
-TCanvas_Manager_Display2::TCanvas_Manager_Display2(Com *p_i, const juce::String &name, juce::Colour backgroundColour, int requiredButtons, bool addToDesktop) : juce::DocumentWindow(name, juce::Colours::lightgrey, DocumentWindow::allButtons)
-{
-    p_com = p_i;
-    setResizable(true, true);
-    auto p = p_com->p_e->processor.params;
-    setBounds(p->Manager_Display2_cx, p->Manager_Display2_cy, p->Manager_Display2_wx, p->Manager_Display2_wy);
-    setUsingNativeTitleBar (true);
-    setVisible (true);
-}
-
-//===================================
-TCanvas_Manager_Display2::~TCanvas_Manager_Display2()
-{
-}
-
-//===================================
-void TCanvas_Manager_Display2::paint(juce::Graphics& g)
-{
-   p_com->p_Manager->Display2(g);
-}
-//==================
-void TCanvas_Manager_Display2::resized()
-{
-	auto p = p_com->p_e->processor.params;
-	// rem: tests are due to initial call with small width (128)??
-    if(getWidth() >= 200)
-       p->Manager_Display2_wx = getWidth();
-    if(getHeight() >= 200)
-       p->Manager_Display2_wy = getHeight();
-}
-//==================
-void TCanvas_Manager_Display2::moved()
-{
-	auto p = p_com->p_e->processor.params;
-    p->Manager_Display2_cx = getX();
-    p->Manager_Display2_cy = getY();
-}
-//==================
-void TCanvas_Manager_Display2::closeButtonPressed()
-{
-  if(p_com != nullptr)
-     p_com->Show_Hide_Window_Manager_Display2();
 }
 //==================
 
@@ -772,14 +543,6 @@ void Parameters::Save_parameters(string name_params, Processor * processor, Memo
 	xml->setAttribute("Manager_s_MM_cy", Manager_s_MM_cy);
 	xml->setAttribute("Manager_s_MM_wx", Manager_s_MM_wx);
 	xml->setAttribute("Manager_s_MM_wy", Manager_s_MM_wy);
-	xml->setAttribute("Manager_Display1_cx", Manager_Display1_cx);
-	xml->setAttribute("Manager_Display1_cy", Manager_Display1_cy);
-	xml->setAttribute("Manager_Display1_wx", Manager_Display1_wx);
-	xml->setAttribute("Manager_Display1_wy", Manager_Display1_wy);
-	xml->setAttribute("Manager_Display2_cx", Manager_Display2_cx);
-	xml->setAttribute("Manager_Display2_cy", Manager_Display2_cy);
-	xml->setAttribute("Manager_Display2_wx", Manager_Display2_wx);
-	xml->setAttribute("Manager_Display2_wy", Manager_Display2_wy);
 
 
     //.. some automatic parameters related to objects, command S()
@@ -813,18 +576,6 @@ void Parameters::Load_parameters(string name_params, Processor * processor, cons
 	Manager_s_MM_wy  =  xmlState->getIntAttribute ("Manager_s_MM_wy", 300); // name, default value if not found
 	if(processor->p_com != nullptr && 	p_com->Manager_s_MM != nullptr)
 		p_com->Manager_s_MM->setBounds(Manager_s_MM_cx, Manager_s_MM_cy, Manager_s_MM_wx, Manager_s_MM_wy);
-	Manager_Display1_cx  =  xmlState->getIntAttribute ("Manager_Display1_cx", 0); // name, default value if not found
-	Manager_Display1_cy  =  xmlState->getIntAttribute ("Manager_Display1_cy", 0); // name, default value if not found
-	Manager_Display1_wx  =  xmlState->getIntAttribute ("Manager_Display1_wx", 300); // name, default value if not found
-	Manager_Display1_wy  =  xmlState->getIntAttribute ("Manager_Display1_wy", 300); // name, default value if not found
-	if(processor->p_com != nullptr && 	p_com->Manager_Display1 != nullptr)
-		p_com->Manager_Display1->setBounds(Manager_Display1_cx, Manager_Display1_cy, Manager_Display1_wx, Manager_Display1_wy);
-	Manager_Display2_cx  =  xmlState->getIntAttribute ("Manager_Display2_cx", 0); // name, default value if not found
-	Manager_Display2_cy  =  xmlState->getIntAttribute ("Manager_Display2_cy", 0); // name, default value if not found
-	Manager_Display2_wx  =  xmlState->getIntAttribute ("Manager_Display2_wx", 300); // name, default value if not found
-	Manager_Display2_wy  =  xmlState->getIntAttribute ("Manager_Display2_wy", 300); // name, default value if not found
-	if(processor->p_com != nullptr && 	p_com->Manager_Display2 != nullptr)
-		p_com->Manager_Display2->setBounds(Manager_Display2_cx, Manager_Display2_cy, Manager_Display2_wx, Manager_Display2_wy);
 
 
 	//.. some automatic parameters related to objects, command S()
