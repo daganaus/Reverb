@@ -2,17 +2,6 @@
 //=========================================================================================
 #pragma once
 #include "Source/JuceHeader.h"
-#include <juce_opengl/juce_opengl.h>
-#define GLM_FORCE_CTOR_INIT
-#ifdef __APPLE__
-   #if TARGET_OS_MAC
-      #include "/opt/homebrew/Cellar/glm/1.0.1/include/glm/glm.hpp"
-   #endif
-#else
-   #include <glm/glm.hpp>  // OpenGL Mathematics
-   #include <glm/gtc/matrix_transform.hpp>
-#endif
-using namespace juce::gl;
 using namespace std;
 using namespace juce;
 //============
