@@ -2,6 +2,17 @@
 //=========================================================================================
 #pragma once
 #include "Source/JuceHeader.h"
+#include <juce_opengl/juce_opengl.h>
+#define GLM_FORCE_CTOR_INIT
+#ifdef __APPLE__
+   #if TARGET_OS_MAC
+      #include "/opt/homebrew/Cellar/glm/1.0.1/include/glm/glm.hpp"
+   #endif
+#else
+   #include <glm/glm.hpp>  // OpenGL Mathematics
+   #include <glm/gtc/matrix_transform.hpp>
+#endif
+using namespace juce::gl;
 using namespace std;
 using namespace juce;
 //============
@@ -46,6 +57,7 @@ public:
     CodeEditorComponent *p_editor = nullptr;
 	TCanvas_Manager_s_MM(Com *p_i, const juce::String &name, juce::Colour backgroundColour, int requiredButtons, bool addToDesktop=true);
 	~TCanvas_Manager_s_MM() override;
+    Viewport viewport; // for scrolling properties
 
     int status = 0; //0 : internal, 1: external
 	void resized() override;
@@ -55,6 +67,42 @@ public:
 
 //----To detect leak memory : Put class name---------------
 	JUCE_LEAK_DETECTOR (TCanvas_Manager_s_MM)
+};
+//==============================================================================
+// A Window
+class TCanvas_Manager_Display1 : public juce::DocumentWindow
+{
+public:	
+    Com * p_com = nullptr;
+	TCanvas_Manager_Display1(Com *p_i, const juce::String &name, juce::Colour backgroundColour, int requiredButtons, bool addToDesktop=true);
+	~TCanvas_Manager_Display1() override;
+
+    int status = 0; //0 : internal, 1: external
+	void resized() override;
+	void moved() override;
+	void paint(juce::Graphics& g) override;
+	void closeButtonPressed();
+
+//----To detect leak memory : Put class name---------------
+	JUCE_LEAK_DETECTOR (TCanvas_Manager_Display1)
+};
+//==============================================================================
+// A Window
+class TCanvas_Manager_Display2 : public juce::DocumentWindow
+{
+public:	
+    Com * p_com = nullptr;
+	TCanvas_Manager_Display2(Com *p_i, const juce::String &name, juce::Colour backgroundColour, int requiredButtons, bool addToDesktop=true);
+	~TCanvas_Manager_Display2() override;
+
+    int status = 0; //0 : internal, 1: external
+	void resized() override;
+	void moved() override;
+	void paint(juce::Graphics& g) override;
+	void closeButtonPressed();
+
+//----To detect leak memory : Put class name---------------
+	JUCE_LEAK_DETECTOR (TCanvas_Manager_Display2)
 };
 
 //-- Below is the list of 3 windows for each tab window + ZC.
@@ -139,10 +187,24 @@ public:
     CodeDocument Manager_s_MM_code;
 
 	//-- from the instruction of class: Manager: 
-    // int opt_sound = 0; //  make_gui =  C(ZC) texxt ="opt_sound:"    help ="1: create a sound, 0: silence"
+    // int opt_sound = 0; //  make_gui =  C(ZC) texxt ="sound:"    help ="1: create a sound, 0: silence"
     juce::ToggleButton *Manager_opt_sound;
     juce::Label *Manager_opt_sound_text;
     juce::Label *Manager_opt_sound_texte;
+
+	//-- from the instruction of class: Manager: 
+    // void Display1(juce::Graphics& g); // make_gui = nl  Window(ZC, "Display1")
+    juce::TextButton *Manager_Display1_button;
+    juce::Label *Manager_Display1_text;
+    TCanvas_Manager_Display1 *Manager_Display1 = nullptr;
+    void Show_Hide_Window_Manager_Display1();
+
+	//-- from the instruction of class: Manager: 
+    // void Display2(juce::Graphics& g); // make_gui =   Window2(ZC, "Display2", 200, 200)
+    juce::TextButton *Manager_Display2_button;
+    juce::Label *Manager_Display2_text;
+    TCanvas_Manager_Display2 *Manager_Display2 = nullptr;
+    void Show_Hide_Window_Manager_Display2();
 
 	//-- from the instruction of class: Manager: 
     // void Loop_manager();  // make_gui = TT(100)
@@ -166,6 +228,10 @@ public:
     void Process_message_Manager_s_MM();  //  widget value --> c++ value
     void Met_a_jour_Manager_opt_sound();  //  c++ value --> widget value
     void Process_message_Manager_opt_sound();  //  widget value --> c++ value
+    void Met_a_jour_Manager_Display1();  //  c++ value --> widget value
+    void Process_message_Manager_Display1();  //  widget value --> c++ value
+    void Met_a_jour_Manager_Display2();  //  c++ value --> widget value
+    void Process_message_Manager_Display2();  //  widget value --> c++ value
     void Met_a_jour_Manager_latency();  //  c++ value --> widget value
     void Process_message_Manager_latency();  //  widget value --> c++ value
     void Met_a_jour_Manager_latency_mean();  //  c++ value --> widget value
@@ -192,14 +258,18 @@ public:
 
 	//.... parameters of objects in com.h
 	int Manager_s_MM_cx = 20, Manager_s_MM_cy = 20, Manager_s_MM_wx = 600,  Manager_s_MM_wy = 600;
+	int Manager_Display1_cx = 20, Manager_Display1_cy = 20, Manager_Display1_wx = 600,  Manager_Display1_wy = 600;
+	int Manager_Display2_cx = 20, Manager_Display2_cy = 20, Manager_Display2_wx = 600,  Manager_Display2_wy = 600;
+
+	//.... some automatic parameters related to objects, from command S() 
 
 //........
     Manager *p_Manager;
 
 //........
 
-	void Save_parameters(Processor * processor, MemoryBlock& destData);
-	void Load_parameters(Processor * processor, const void* data, int sizeInBytes);
+	void Save_parameters(string name_params, Processor * processor, MemoryBlock& destData);
+	void Load_parameters(string name_params, Processor * processor, const void* data, int sizeInBytes);
 
 	void Add_Automation_Parameters(Processor * processor);
 	void Transmit_Automation_Parameters(Processor * processor, int parameterIndex);

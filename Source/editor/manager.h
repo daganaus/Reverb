@@ -49,7 +49,11 @@ public:
 	//---
 	int opt_sound = 0; //  make_gui =  C(ZC) texxt ="sound:"    help ="1: create a sound, 0: silence"
 
-	
+
+	void Display1(juce::Graphics& g); // make_gui = nl  Window(ZC, "Display1") 
+
+	void Display2(juce::Graphics& g); // make_gui =   Window2(ZC, "Display2", 200, 200) 
+
 	
 	
 //-- constructeur ------------------------

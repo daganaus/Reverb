@@ -292,12 +292,12 @@ juce::AudioProcessorEditor*  Processor::createEditor()
 //==============================================================================
 void Processor::getStateInformation (MemoryBlock& destData)
 {
-	params->Save_parameters(this, destData); // in com.cc
+	params->Save_parameters( name_params, this, destData); // in com.cc
 }
 //==============================================================================
 void Processor::setStateInformation (const void* data, int sizeInBytes)
 {
-	params->Load_parameters(this, data, sizeInBytes); // in com.cc
+	params->Load_parameters( name_params, this, data, sizeInBytes); // in com.cc
 }
 
 

@@ -71,6 +71,7 @@ public:
 	
 
 	//---- parameters, saved by the DAW.
+	string name_params = "params_2024_11_17"; // xml name. Change name if you need. 
 	Parameters *params = nullptr; // in com.h and com.cc. Set in the processor constructor
     void parameterValueChanged (int parameterIndex, float newValue) override;
 	void parameterGestureChanged(int parameterIndex, bool gestureIsStarting) override;
