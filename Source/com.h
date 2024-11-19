@@ -58,7 +58,7 @@ public:
 	JUCE_LEAK_DETECTOR (TCanvas_Manager_s_MM)
 };
 
-//-- Below is the list of 3 windows for each tab window + ZC.
+//-- Below is the list of 4 windows for each tab window + ZC.
 
 
 //=============================================
@@ -105,6 +105,28 @@ class Page_ZT_1 : public juce::Component
 JUCE_LEAK_DETECTOR (Page_ZT_1)
 };
 
+//=============================================
+class Page_ZT_2 : public juce::Component 
+{
+ public:
+   Page_ZT_2(Com *p_i);
+   ~Page_ZT_2();
+
+    // resized() that is called once at the initialisation of the window and every time the window is resized by the user (if resizing is enabled).
+    void resized() override;
+    void paint(juce::Graphics& g) override;
+    Com *p_com = nullptr;
+    int ZC_size = 20; // vertical size of zone above tabs
+
+
+    //------------
+    juce::TabbedComponent *tab;
+    CustomTabLookAndFeel customLookAndFeel;
+
+//----To detect leak memory---------------
+JUCE_LEAK_DETECTOR (Page_ZT_2)
+};
+
 //=====================
 // Main class for widgets
 
@@ -128,6 +150,7 @@ public:
    //some pointers for easer access to tabs by their full name
 	Page_ZT_0  * p_Tab_ZC;
 	Page_ZT_1  * p_Tab_Monitor;
+	Page_ZT_2  * p_Tab_Test;
 
   //--- list of objects in this zone
 
@@ -144,6 +167,12 @@ public:
     juce::ToggleButton *Manager_opt_sound;
     juce::Label *Manager_opt_sound_text;
     juce::Label *Manager_opt_sound_texte;
+
+	//-- from the instruction of class: Manager: 
+    // int test = 0; //  make_gui =  C(ZT("Test"), "test") texxt ="test:"    help ="1: create a sound, 0: silence"
+    juce::ToggleButton *Manager_test;
+    juce::Label *Manager_test_text;
+    juce::Label *Manager_test_texte;
 
 	//-- from the instruction of class: Manager: 
     // void Loop_manager();  // make_gui = TT(100)
@@ -167,6 +196,8 @@ public:
     void Process_message_Manager_s_MM();  //  widget value --> c++ value
     void Met_a_jour_Manager_opt_sound();  //  c++ value --> widget value
     void Process_message_Manager_opt_sound();  //  widget value --> c++ value
+    void Met_a_jour_Manager_test();  //  c++ value --> widget value
+    void Process_message_Manager_test();  //  widget value --> c++ value
     void Met_a_jour_Manager_latency();  //  c++ value --> widget value
     void Process_message_Manager_latency();  //  widget value --> c++ value
     void Met_a_jour_Manager_latency_mean();  //  c++ value --> widget value
