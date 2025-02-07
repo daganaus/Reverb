@@ -1,4 +1,4 @@
-#--- SCRIPT DE COMPILATION AVEC CMAKE
+#--- SCRIPT DE COMPILATION AVEC CMAKE POUR WINDOWS
 
 # Créer le dossier de build s'il n'existe pas
 $buildPath = "C:\Users\$env:USERNAME\TP\juce_template-main\build"
