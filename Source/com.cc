@@ -25,7 +25,7 @@ int prochaine(istream & fich)
 		return 1;
 }
 
-//-- Below is the list of 4 windows for each tab window + ZC, named: Page_ZT_j, with j=0->2
+//-- Below is the list of 3 windows for each tab window + ZC, named: Page_ZT_j, with j=0->1
 
 
 //====Constructor =========================================
@@ -69,7 +69,6 @@ Page_ZT_0::Page_ZT_0(Com *p_i)
    tab = 	new juce::TabbedComponent(juce::TabbedButtonBar::TabsAtTop);
    auto colour = findColour (ResizableWindow::backgroundColourId);
    tab->addTab("Monitor", colour, new Page_ZT_1(p_com), true);
-   tab->addTab("Test", colour, new Page_ZT_2(p_com), true);
    tab->setLookAndFeel(&customLookAndFeel);
    addAndMakeVisible (tab);
 
@@ -186,61 +185,6 @@ void Page_ZT_1::resized()
 void Page_ZT_1::paint(juce::Graphics& g)
 {
 }
-
-//====Constructor =========================================
-Page_ZT_2::Page_ZT_2(Com *p_i)
-{
-   p_com = p_i;
-   p_com->p_Tab_Test = this;
-   if(p_com->verbose >= 1 )
-     cout<<"Page_ZT_2()"<<endl;
-
-
-   //-- from the instruction of class: Manager: 
-   // int test = 0; //  make_gui =  C(ZT("Test"), "test") texxt ="test:"    help ="1: create a sound, 0: silence"
-
-   p_com->Manager_test_text = new juce::Label();
-   p_com->Manager_test_text->setText("test:", juce::dontSendNotification);
-   addAndMakeVisible (p_com->Manager_test_text);
-
-	p_com->Manager_test = new juce::ToggleButton();
-   p_com->Manager_test->onClick = [this] { p_com->Process_message_Manager_test(); }; // callback
-   p_com->Manager_test->setToggleState(false, juce::dontSendNotification);
-   p_com->Manager_test->setTooltip("1: create a sound, 0: silence");
-   addAndMakeVisible (p_com->Manager_test);
-
-   p_com->Manager_test_texte = new juce::Label();
-   p_com->Manager_test_texte->setText("test", juce::dontSendNotification);
-   addAndMakeVisible (p_com->Manager_test_texte);
-   if(p_com->verbose >= 1 )
-     cout<<"end of Page_ZT_2()"<<endl;
-
-}
-
-//====  Destructor =========================================
-Page_ZT_2::~Page_ZT_2()
-{
-
-   delete p_com->Manager_test_text;
-   delete p_com->Manager_test;
-   delete p_com->Manager_test_texte;
-}
-
-//=============================================
-// resized() that is called once at the initialisation of the window and every time the window is resized by the user (if resizing is enabled). This is a good place to set the size and position of widgets so they can be positioned relative to the window bounds.
-void Page_ZT_2::resized()
-{
-
-   p_com->Manager_test_text->setBounds(12, 10, 40, 20 ); //  (x, y, width, height)
-   p_com->Manager_test->setBounds(52, 10, 30, 20 ); //  (x, y, width, height)
-   p_com->Manager_test_texte->setBounds(82, 10, 44, 20 ); //  (x, y, width, height)
-}
-
-//=============================================
-// paint() function is where all custom shapes and GUI elements are drawn to the window.
-void Page_ZT_2::paint(juce::Graphics& g)
-{
-}
 //======================
 Com::Com(Editor *p_i, Manager *pManager)
 {
@@ -259,7 +203,6 @@ Com::Com(Editor *p_i, Manager *pManager)
    //.....  c++ variables -> widget
    Met_a_jour_Manager_s_MM();
    Met_a_jour_Manager_opt_sound();
-   Met_a_jour_Manager_test();
    Met_a_jour_Manager_latency();
    Met_a_jour_Manager_latency_mean();
 }
@@ -301,18 +244,6 @@ void Com::Met_a_jour_Manager_opt_sound()
        	Manager_opt_sound->setToggleState(true, juce::dontSendNotification);
     else
        	Manager_opt_sound->setToggleState(false, juce::dontSendNotification);
-}
-//===================
-// function to transfert c++ variable -> widget variable
-// will call Process_Manager_test()
-void Com::Met_a_jour_Manager_test()
-{
-	if( Manager_test == nullptr)
-		return;
-    if(p_Manager->test)
-       	Manager_test->setToggleState(true, juce::dontSendNotification);
-    else
-       	Manager_test->setToggleState(false, juce::dontSendNotification);
 }
 //===================
 // function to transfert c++ variable -> widget variable
@@ -358,15 +289,6 @@ void Com::Process_message_Manager_opt_sound()
             	p_Manager->opt_sound = 1;
          else
             	p_Manager->opt_sound = 0;
-}
-//===================
-// function to transfert widget variable -> c++ variable -> parameter
-void Com::Process_message_Manager_test()
-{
-         if(Manager_test->getToggleState())
-            	p_Manager->test = 1;
-         else
-            	p_Manager->test = 0;
 }
 //===================
 // function to transfert widget variable -> c++ variable -> parameter
@@ -627,7 +549,6 @@ void Parameters::Save_parameters(string name_params, Processor * processor, Memo
     // in case of compilation error, check if you need to add a function operator << or >> above
 	//... parameters of user's objects
 	xml->setAttribute("Manager_opt_sound",   p_Manager->opt_sound);
-	xml->setAttribute("Manager_test",   p_Manager->test);
 	xml->setAttribute("Manager_latency",   p_Manager->latency);
 	xml->setAttribute("Manager_latency_mean",   p_Manager->latency_mean);
 	processor->copyXmlToBinary(*xml, destData);
@@ -663,10 +584,6 @@ void Parameters::Load_parameters(string name_params, Processor * processor, cons
 		     if(processor->p_com != nullptr)
 		   	    processor->p_com->Met_a_jour_Manager_opt_sound(); // -> widget variable
         //cout<<"      load     value   p_Manager->opt_sound   = "<<   p_Manager->opt_sound <<endl;
-	     p_Manager->test  = xmlState->getIntAttribute ("Manager_test", 0); // name, default value if not found
-		     if(processor->p_com != nullptr)
-		   	    processor->p_com->Met_a_jour_Manager_test(); // -> widget variable
-        //cout<<"      load     value   p_Manager->test   = "<<   p_Manager->test <<endl;
 	   p_Manager->latency  =  xmlState->getDoubleAttribute ("Manager_latency", 0); // name, default value if not found
 	   if(processor->p_com != nullptr)
 		   processor->p_com->Met_a_jour_Manager_latency(); // -> widget variable

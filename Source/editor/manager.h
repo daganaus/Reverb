@@ -49,9 +49,6 @@ public:
 	//---
 	int opt_sound = 0; //  make_gui =  C(ZC) texxt ="sound:"    help ="1: create a sound, 0: silence"
 
-	//---
-	int test = 0; //  make_gui =  C(ZT("Test"), "test") texxt ="test:"    help ="1: create a sound, 0: silence"
-
 	
 //-- constructeur ------------------------
 	Manager();

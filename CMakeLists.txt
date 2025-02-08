@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 
 #------------ Change this -------------
-set(TARGET_NAME Filtre) # name of the project
+set(TARGET_NAME Template) # name of the project
 set(USER_NAME faure) # directory on Windows
 set(COMPANY_NAME Fred)
 project(${TARGET_NAME} VERSION 1.0.4)   # version
