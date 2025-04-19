@@ -3,8 +3,8 @@
 # ================================================
 # Script Bash pour créer un nouveau projet JUCE
 # à partir d'un template local ou en le clonant
-# Usage : ./setup_juce.sh MonNouveauProjet
-# Compatible macOS / Linux
+# Usage : ./1_setup.sh MonNouveauProjet
+# Compatible macOS / Linux / Windows via WSL ou Git Bash
 # ================================================
 
 set -e
@@ -12,19 +12,34 @@ set -e
 # Vérifie que l'utilisateur fournit un nom de projet
 if [ -z "$1" ]; then
   echo "❌ Veuillez fournir un nom de projet."
-  echo "Usage : ./setup_juce.sh NomDuProjet"
+  echo "Usage : ./1_setup.sh NomDuProjet"
   exit 1
 fi
 
+# ========== Configuration persistante ==========
+CONFIG_FILE="$HOME/.juce_config"
+
+if [ -f "$CONFIG_FILE" ]; then
+  source "$CONFIG_FILE"
+else
+  echo "❓ Où souhaitez-vous stocker vos projets JUCE ?"
+  read -r -e -p "Répertoire racine (ex: $HOME/juce_projects) : " user_input
+  export JUCE_PROJ="${user_input:-$HOME/juce_projects}"
+  echo "export JUCE_PROJ=\"$JUCE_PROJ\"" > "$CONFIG_FILE"
+  echo "✅ Chemin sauvegardé dans $CONFIG_FILE"
+fi
+
+# Crée le répertoire s'il n'existe pas
+mkdir -p "$JUCE_PROJ"
+
 # ========== Paramètres ==========
 NEW_PROJECT_NAME="$1"
-JUCE_PROJ="$HOME/c++/musique/JUCE_fred"
 TEMPLATE_NAME="Template"
 TEMPLATE_REPO="https://gricad-gitlab.univ-grenoble-alpes.fr/faurefre/juce_template.git"
 SOURCE_DIR="$JUCE_PROJ/$TEMPLATE_NAME"
 DEST_DIR="$JUCE_PROJ/$NEW_PROJECT_NAME"
 
-# ========== Vérifications ==========
+# ========== Vérifications ========== 
 
 # Vérifie que le projet n'existe pas déjà
 if [ -d "$DEST_DIR" ]; then
@@ -78,7 +93,8 @@ EOF
 
 git add .gitignore
 
+# ========== Message final ==========
 echo "✅ Nouveau projet prêt : $DEST_DIR"
-echo "📖 Un fichier README.md est inclus avec des instructions pour Linux, macOS et Windows."
-echo "💡 Dans le répertoire $DEST_DIR, lancez ./build_juce.sh ou ./build_juce.ps1 pour compiler."
-
+cd "$DEST_DIR"
+echo "📂 Vous êtes maintenant dans le dossier du projet : $DEST_DIR"
+echo "💡 Lancez ./2_build.sh pour compiler. Puis utilisez ./3_exec.sh pour l'exécuter."
