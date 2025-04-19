@@ -9,28 +9,16 @@
 
 set -e
 
+# Déduit automatiquement le chemin du répertoire parent (JUCE_PROJ)
+JUCE_PROJ=$(cd "$(dirname "$0")/.." && pwd)
+echo "📁 Répertoire JUCE_PROJ détecté : $JUCE_PROJ"
+
 # Vérifie que l'utilisateur fournit un nom de projet
 if [ -z "$1" ]; then
   echo "❌ Veuillez fournir un nom de projet."
   echo "Usage : ./1_setup.sh NomDuProjet"
   exit 1
 fi
-
-# ========== Configuration persistante ==========
-CONFIG_FILE="$HOME/.juce_config"
-
-if [ -f "$CONFIG_FILE" ]; then
-  source "$CONFIG_FILE"
-else
-  echo "❓ Où souhaitez-vous stocker vos projets JUCE ?"
-  read -r -e -p "Répertoire racine (ex: $HOME/juce_projects) : " user_input
-  export JUCE_PROJ="${user_input:-$HOME/juce_projects}"
-  echo "export JUCE_PROJ=\"$JUCE_PROJ\"" > "$CONFIG_FILE"
-  echo "✅ Chemin sauvegardé dans $CONFIG_FILE"
-fi
-
-# Crée le répertoire s'il n'existe pas
-mkdir -p "$JUCE_PROJ"
 
 # ========== Paramètres ==========
 NEW_PROJECT_NAME="$1"
@@ -95,6 +83,5 @@ git add .gitignore
 
 # ========== Message final ==========
 echo "✅ Nouveau projet prêt : $DEST_DIR"
-cd "$DEST_DIR"
-echo "📂 Vous êtes maintenant dans le dossier du projet : $DEST_DIR"
-echo "💡 Lancez ./2_build.sh pour compiler. Puis utilisez ./3_exec.sh pour l'exécuter."
+echo "💡 Tapez maintenant : cd \"$DEST_DIR\""
+echo "   puis lancez ./2_build.sh pour compiler. Puis utilisez ./3_exec.sh pour l'exécuter."

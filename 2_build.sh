@@ -9,17 +9,8 @@
 
 set -e
 
-# Chargement config utilisateur
-CONFIG_FILE="$HOME/.juce_config"
-if [ -f "$CONFIG_FILE" ]; then
-  source "$CONFIG_FILE"
-else
-  echo "❌ Fichier de configuration introuvable : $CONFIG_FILE"
-  echo "Lancez d'abord ./1_setup.sh MonProjet"
-  exit 1
-fi
-
-# Nom du projet courant (déduit du dossier courant)
+# Déduit automatiquement le chemin du répertoire JUCE_PROJ
+JUCE_PROJ=$(cd "$(dirname "$0")/.." && pwd)
 PROJECT="$(basename "$PWD")"
 JUCE_DIR="$JUCE_PROJ/JUCE-master"
 BUILD_DIR="build"
@@ -46,7 +37,7 @@ RED='\033[0;31m'
 NC='\033[0m'
 echo -e "${GREEN}🚀 Compilation de $PROJECT [$BUILD_TYPE]${NC}"
 
-# Vérification
+# Vérification JUCE_DIR
 if [ ! -f "$JUCE_DIR/CMakeLists.txt" ]; then
   echo -e "${RED}❌ Erreur : JUCE_DIR invalide ($JUCE_DIR)${NC}"
   exit 1
@@ -79,17 +70,4 @@ fi
 
 # Message final
 echo -e "${GREEN}✅ Compilation réussie.${NC}"
-
-# Proposition d'exécution
-OS_NAME=$(uname)
-echo -e "\n▶️ Étape suivante : lancer ./3_exec.sh"
-echo "💡 Chemin binaire probable :"
-if [[ "$OS_NAME" == "Linux" ]]; then
-  echo "$JUCE_PROJ/$PROJECT/build/${PROJECT}_artefacts/$BUILD_TYPE/Standalone/Fred_$PROJECT"
-elif [[ "$OS_NAME" == "Darwin" ]]; then
-  echo "open $JUCE_PROJ/$PROJECT/build/${PROJECT}_artefacts/$BUILD_TYPE/Standalone/Fred_$PROJECT.app"
-elif [[ "$OS_NAME" == MINGW* || "$OS_NAME" == MSYS* || "$OS_NAME" == CYGWIN* ]]; then
-  echo "& \"C:\\Users\\<NomUtilisateur>\\...\\$PROJECT\\build\\${PROJECT}_artefacts\\$BUILD_TYPE\\Standalone\\Fred_${PROJECT}.exe\""
-else
-  echo "🔹 Système non reconnu : $OS_NAME"
-fi
+echo -e "\n▶️ Étape suivante : ./3_exec.sh"

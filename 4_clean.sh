@@ -8,17 +8,8 @@
 
 set -e
 
-# Chargement config utilisateur
-CONFIG_FILE="$HOME/.juce_config"
-if [ -f "$CONFIG_FILE" ]; then
-  source "$CONFIG_FILE"
-else
-  echo "❌ Fichier de configuration introuvable : $CONFIG_FILE"
-  echo "Lancez d'abord ./1_setup.sh MonProjet"
-  exit 1
-fi
-
-# Nom du projet (dossier courant)
+# Déduit automatiquement le chemin du répertoire JUCE_PROJ
+JUCE_PROJ=$(cd "$(dirname "$0")/.." && pwd)
 PROJECT="$(basename "$PWD")"
 BUILD_DIR="build"
 
@@ -31,7 +22,7 @@ else
   echo "ℹ️ Aucun dossier $BUILD_DIR à supprimer."
 fi
 
-# Nettoyage complémentaire si nécessaire (ex: cpack, install manifest)
+# Nettoyage complémentaire si nécessaire
 rm -f install_manifest.txt
 rm -f *.tar.gz *.pkg *.deb *.exe *.zip
 

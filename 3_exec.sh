@@ -8,21 +8,11 @@
 
 set -e
 
-# Chargement config utilisateur
-CONFIG_FILE="$HOME/.juce_config"
-if [ -f "$CONFIG_FILE" ]; then
-  source "$CONFIG_FILE"
-else
-  echo "❌ Fichier de configuration introuvable : $CONFIG_FILE"
-  echo "Lancez d'abord ./1_setup.sh MonProjet"
-  exit 1
-fi
-
-# Déduit le nom du projet
+# Déduit automatiquement le chemin du répertoire JUCE_PROJ
+JUCE_PROJ=$(cd "$(dirname "$0")/.." && pwd)
 PROJECT="$(basename "$PWD")"
 BUILD_TYPE="Debug"
 
-# Vérifie si le binaire existe, sinon propose le build release
 LINUX_BIN="$JUCE_PROJ/$PROJECT/build/${PROJECT}_artefacts/$BUILD_TYPE/Standalone/Fred_$PROJECT"
 MACOS_APP="$JUCE_PROJ/$PROJECT/build/${PROJECT}_artefacts/$BUILD_TYPE/Standalone/Fred_$PROJECT.app"
 WIN_EXE="C:\\Users\\<NomUtilisateur>\\...\\$PROJECT\\build\\${PROJECT}_artefacts\\$BUILD_TYPE\\Standalone\\Fred_${PROJECT}.exe"

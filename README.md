@@ -8,10 +8,11 @@ Ce dépôt est un **modèle minimal et fonctionnel** pour créer un plugin audio
 
 - [🎹 Template JUCE multi-plateforme (Linux, macOS, Windows)](#-template-juce-multi-plateforme-linux-macos-windows)
   - [📋 Menu rapide](#-menu-rapide)
-  - [📁 Arborescence recommandée](#-arborescence-recommandée)
+  - [📁](#)
   - [🚀 Étapes d'utilisation](#-étapes-dutilisation)
-    - [✅ 1. Cloner ce template](#-1-cloner-ce-template)
-    - [✅ 2. Configuration initiale (automatique)](#-2-configuration-initiale-automatique)
+    - [✅ 0. A faire une seule fois avant le premier projet](#-0-a-faire-une-seule-fois-avant-le-premier-projet)
+      - [✅ 0.1. Choisir un répertoire et télécharger JUCE](#-01-choisir-un-répertoire-et-télécharger-juce)
+      - [✅ 0.2. Télécharger  ce Template](#-02-télécharger--ce-template)
     - [🛠️ 2. Créer un nouveau projet](#️-2-créer-un-nouveau-projet)
     - [⚙️ 3. Compiler le projet](#️-3-compiler-le-projet)
     - [▶️ 4. Lancer l'exécutable standalone](#️-4-lancer-lexécutable-standalone)
@@ -23,15 +24,7 @@ Ce dépôt est un **modèle minimal et fonctionnel** pour créer un plugin audio
 
 ---
 
-## 📁 Arborescence recommandée
-
-```
-$HOME/c++/musique/JUCE_fred/
-├── JUCE/                    ← clone du framework JUCE (officiel ou fork)
-├── Template/                ← ce dépôt cloné ici (modèle de base)
-├── MonProjet1/              ← projets créés depuis le modèle
-├── MonProjet2/
-```
+## 📁 
 
 ---
 
@@ -39,71 +32,104 @@ $HOME/c++/musique/JUCE_fred/
 
 
 
-### ✅ 1. Cloner ce template
+### ✅ 0. A faire une seule fois avant le premier projet
 
-Avant de commencer, vous devez choisir un répertoire personnel où seront stockés tous vos projets JUCE et où vous pouvez   cloner (copier) ce dépôt template.
-Dans ce répertoire, on suppose que vous avez déjà installé  [JUCE](https://github.com/juce-framework/JUCE) 
+
+
+#### ✅ 0.1. Choisir un répertoire et télécharger JUCE
+
+
+Avant de commencer, on choisit un répertoire existant  (par exemple le répertoire TP ou $HOME/c++/musique/JUCE_fred/ ) où seront stockés tous nos projets et où on va télécharger (cloner)  ce dépôt Template. Pour écrire dans un terminal
+
+    export JUCE_PROJ=$HOME/TP
+
+  ou
+   
+    export JUCE_PROJ=$HOME/c++/musique/JUCE_fred
+
+  et
+
+    cd $JUCE_PROJ # se déplace dans le répertoire.
+
+Dans ce répertoire, il faut au préalable avoir  installé JUCE  dans le répertoire JUCE-master.    Si ce n'est pas déjà fait, sur le site, [JUCE](https://juce.com/download/), cliquer sur « Download from GitHub », puis bouton « Code » et « Download ZIP » et extraire le fichier téléchargé dans ce répertoire (ex: TP). Cela crée le répertoire « JUCE-master ».
+
+
+Alternative pour télécharger JUCE: dans un terminal depuis ce répertoire écrire
+
+    cd "$JUCE_PROJ"
+    git clone --recurse-submodules https://github.com/juce-framework/JUCE.git
+    mv JUCE JUCE-master # renomme
+
+
+
+#### ✅ 0.2. Télécharger  ce Template
+
+Dans ce répertoire $JUCE_PROJ, on télécharge ce projet Template il faut au préalable avoir  installé JUCE  dans le répertoire JUCE-master.    Si ce n'est pas déjà fait, sur le site, [JUCE](https://juce.com/download/), cliquer sur « Download from GitHub », puis bouton « Code » et « Download ZIP » et extraire le fichier téléchargé dans ce répertoire (ex: TP). Cela crée le répertoire « JUCE-master ».
 
 Par exemple sous linux:
 
 ```bash
-mkdir -p $HOME/c++/musique/JUCE_fred
-cd $HOME/c++/musique/JUCE_fred
-
 git clone https://gricad-gitlab.univ-grenoble-alpes.fr/faurefre/juce_template.git Template
 cd Template
 ```
 
-### ✅ 2. Configuration initiale (automatique)
+Ainsi, plus tard, on aura par exemple  l'arborescence
 
-La première fois, le script vous demandera :
-
-```bash
-❓ Où souhaitez-vous stocker vos projets JUCE ?
-Répertoire racine (ex: $HOME/juce_projects) :
+```
+$HOME/TP/
+├── JUCE-master/             ← téléchargé depuis JUCE
+├── Template/                ← ce dépôt téléchargé
+├── Projet1/                 ← futurs  projets que l'on créer
+├── Projet2/
 ```
 
-Ce chemin sera sauvegardé dans `~/.juce_config` pour toutes les futures utilisations.
 
 ---
 
 ### 🛠️ 2. Créer un nouveau projet
 
+On choisit un nom de projet, par exemple Projet1 et on écrit dans le terminal:
+
 ```bash
-./1_setup.sh MonNouveauProjet
+./1_setup.sh Projet1
 ```
 
 Ce script :
-- clone le template s'il est absent
+- télécharge le template s'il est absent
 - crée un nouveau dossier
 - renomme automatiquement le projet dans le `CMakeLists.txt`
 - initialise Git et ajoute un `.gitignore`
-- vous place dans le dossier du projet
+
+Aller dans le répertoire du nouveau projet en écrivant 
+
+    cd $JUCE_PROJ/Projet1
+
+
+
 
 ---
 
 ### ⚙️ 3. Compiler le projet
 
-Dans le dossier du projet :
+Dans le répertoire du projet écrire au choix:
 
 ```bash
-./2_build.sh           # Compilation Debug (par défaut)
-./2_build.sh --fast    # Recompilation rapide
-./2_build.sh --release # Compilation Release
+./2_build.sh           # Compilation Debug (par défaut, à faire la 1ere fois)
+./2_build.sh --fast    # Recompilation rapide (pas la 1ere fois)
+./2_build.sh --release # Compilation Release (pour avoir une version finale optimisée)
 ```
 
 ---
 
 ### ▶️ 4. Lancer l'exécutable standalone
 
+Dans le répertoire du projet écrire:
+
 ```bash
 ./3_exec.sh
 ```
 
-Ce script détecte automatiquement :
-- Linux → exécute le binaire
-- macOS → ouvre l'application .app
-- Windows → affiche le chemin du `.exe`
+
 
 ---
 
