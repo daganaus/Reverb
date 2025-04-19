@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 
 # ------------ Configuration utilisateur -------------
-set(TARGET_NAME Template)
+get_filename_component(TARGET_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 set(USER_NAME faure)
 set(COMPANY_NAME Fred)
 project(${TARGET_NAME} VERSION 1.0.4)
@@ -10,6 +10,7 @@ project(${TARGET_NAME} VERSION 1.0.4)
 option(BUILD_STANDALONE "Build standalone application" ON)
 option(BUILD_VST3 "Build VST3 plugin" ON)
 option(BUILD_AU "Build AU plugin (mac only)" ON)
+option(ENABLE_PACKAGING "Enable packaging with CPack" ON)
 
 # ------------ Architecture Mac multi-plateforme -------------
 if(APPLE)
@@ -98,56 +99,58 @@ target_link_libraries(${TARGET_NAME}
     juce::juce_recommended_warning_flags
 )
 
-# ------------ Installation et packaging ------------
-if(APPLE)
-    set(CMAKE_INSTALL_PREFIX /)
-    set(CPACK_PACKAGING_INSTALL_PREFIX /)
+# ------------ Installation et packaging conditionnel ------------
+if(ENABLE_PACKAGING)
+    if(APPLE)
+        set(CMAKE_INSTALL_PREFIX /)
+        set(CPACK_PACKAGING_INSTALL_PREFIX /)
 
-    install(TARGETS ${TARGET_NAME}_AU
-        LIBRARY DESTINATION Library/Audio/Plug-Ins/Components
-        COMPONENT AU)
-    install(TARGETS ${TARGET_NAME}_VST3
-        LIBRARY DESTINATION Library/Audio/Plug-Ins/VST3
-        COMPONENT VST3)
-    install(TARGETS ${TARGET_NAME}_Standalone
-        BUNDLE DESTINATION "Applications"
-        COMPONENT Standalone)
+        install(TARGETS ${TARGET_NAME}_AU
+            LIBRARY DESTINATION Library/Audio/Plug-Ins/Components
+            COMPONENT AU)
+        install(TARGETS ${TARGET_NAME}_VST3
+            LIBRARY DESTINATION Library/Audio/Plug-Ins/VST3
+            COMPONENT VST3)
+        install(TARGETS ${TARGET_NAME}_Standalone
+            BUNDLE DESTINATION "Applications"
+            COMPONENT Standalone)
 
-    set(CPACK_GENERATOR productbuild)
-    set(CPACK_PACKAGE_VENDOR ${COMPANY_NAME})
-    include(CPack)
+        set(CPACK_GENERATOR productbuild)
+        set(CPACK_PACKAGE_VENDOR ${COMPANY_NAME})
+        include(CPack)
 
-elseif(UNIX)
-	install(TARGETS ${TARGET_NAME}_VST3 
-	LIBRARY DESTINATION "lib/vst3"
-	COMPONENT VST3)
-	install(TARGETS ${TARGET_NAME}_Standalone
-	RUNTIME DESTINATION bin)
+    elseif(UNIX)
+        install(TARGETS ${TARGET_NAME}_VST3 
+            LIBRARY DESTINATION "lib/vst3"
+            COMPONENT VST3)
+        install(TARGETS ${TARGET_NAME}_Standalone
+            RUNTIME DESTINATION bin)
 
-	set(CPACK_GENERATOR "TGZ;DEB")
-	set(CPACK_PACKAGE_NAME "${TARGET_NAME}")
-	set(CPACK_PACKAGE_VENDOR "${COMPANY_NAME}")
-	set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
-	set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${TARGET_NAME} plugin for audio processing")
-	set(CPACK_DEBIAN_PACKAGE_MAINTAINER "${USER_NAME}")
-	include(CPack)
-	
-elseif(WIN32)
-    set(CMAKE_INSTALL_PREFIX "C:/Users/${USER_NAME}")
+        set(CPACK_GENERATOR "TGZ;DEB")
+        set(CPACK_PACKAGE_NAME "${TARGET_NAME}")
+        set(CPACK_PACKAGE_VENDOR "${COMPANY_NAME}")
+        set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
+        set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${TARGET_NAME} plugin for audio processing")
+        set(CPACK_DEBIAN_PACKAGE_MAINTAINER "${USER_NAME}")
+        include(CPack)
 
-    install(TARGETS ${TARGET_NAME}
-        LIBRARY DESTINATION "VST3"
-        COMPONENT VST3)
-    install(TARGETS ${TARGET_NAME}_Standalone
-        RUNTIME DESTINATION "${TARGET_NAME}"
-        COMPONENT Standalone)
+    elseif(WIN32)
+        set(CMAKE_INSTALL_PREFIX "C:/Users/${USER_NAME}")
 
-    set(CPACK_GENERATOR "NSIS")
-    set(CPACK_PACKAGE_NAME "${TARGET_NAME}")
-    set(CPACK_PACKAGE_VENDOR "${COMPANY_NAME}")
-    set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
-    set(CPACK_PACKAGE_DESCRIPTION "${TARGET_NAME} plugin for audio processing")
-    set(CPACK_NSIS_INSTALL_ROOT "C:/Users/${USER_NAME}")
-    set(CPACK_NSIS_DISPLAY_NAME "${TARGET_NAME} Audio Plugins")
-    include(CPack)
+        install(TARGETS ${TARGET_NAME}
+            LIBRARY DESTINATION "VST3"
+            COMPONENT VST3)
+        install(TARGETS ${TARGET_NAME}_Standalone
+            RUNTIME DESTINATION "${TARGET_NAME}"
+            COMPONENT Standalone)
+
+        set(CPACK_GENERATOR "NSIS")
+        set(CPACK_PACKAGE_NAME "${TARGET_NAME}")
+        set(CPACK_PACKAGE_VENDOR "${COMPANY_NAME}")
+        set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
+        set(CPACK_PACKAGE_DESCRIPTION "${TARGET_NAME} plugin for audio processing")
+        set(CPACK_NSIS_INSTALL_ROOT "C:/Users/${USER_NAME}")
+        set(CPACK_NSIS_DISPLAY_NAME "${TARGET_NAME} Audio Plugins")
+        include(CPack)
+    endif()
 endif()

@@ -15,12 +15,12 @@ Il est destiné en particulier à des [TP](https://www-fourier.ujf-grenoble.fr/~
       - [✅ 0.2. Télécharger  ce Template](#-02-télécharger--ce-template)
     - [🛠️ 2. Créer un nouveau projet](#️-2-créer-un-nouveau-projet)
     - [⚙️ 3. Compiler le projet](#️-3-compiler-le-projet)
-      - [3.2 Options de compilations disponibles](#32-options-de-compilations-disponibles)
     - [▶️ 4. Lancer l'exécutable standalone](#️-4-lancer-lexécutable-standalone)
     - [🧹 5. Nettoyer le projet](#-5-nettoyer-le-projet)
     - [⬆️ 6. Pousser sur GitLab](#️-6-pousser-sur-gitlab)
   - [🔗 Dépendances nécessaires](#-dépendances-nécessaires)
-  - [✨ Astuce](#-astuce)
+  - [✨ Astuces](#-astuces)
+      - [3.2 Options de compilations disponibles](#32-options-de-compilations-disponibles)
   - [📬 Contact](#-contact)
 
 
@@ -47,16 +47,16 @@ Avant de commencer, on choisit un répertoire existant  (par exemple le réperto
 
   et
 
-    cd $JUCE_PROJ # se déplace dans le répertoire.
+    cd $JUCE_PROJ
 
 Dans ce répertoire, il faut au préalable avoir  installé JUCE  dans le répertoire JUCE-master.    Si ce n'est pas déjà fait, sur le site, [JUCE](https://juce.com/download/), cliquer sur « Download from GitHub », puis bouton « Code » et « Download ZIP » et extraire le fichier téléchargé dans ce répertoire (ex: TP). Cela crée le répertoire « JUCE-master ».
 
 
-Alternative pour télécharger JUCE: dans un terminal depuis ce répertoire écrire
+Alternative pour télécharger JUCE sous linux ou Mac: dans un terminal depuis ce répertoire écrire
 
     cd "$JUCE_PROJ"
     git clone --recurse-submodules https://github.com/juce-framework/JUCE.git
-    mv JUCE JUCE-master # renomme
+    mv JUCE JUCE-master 
 
 
 
@@ -64,7 +64,7 @@ Alternative pour télécharger JUCE: dans un terminal depuis ce répertoire écr
 
 Dans ce répertoire $JUCE_PROJ, on télécharge ce projet Template il faut au préalable avoir  installé JUCE  dans le répertoire JUCE-master.    Si ce n'est pas déjà fait, sur le site, [JUCE](https://juce.com/download/), cliquer sur « Download from GitHub », puis bouton « Code » et « Download ZIP » et extraire le fichier téléchargé dans ce répertoire (ex: TP). Cela crée le répertoire « JUCE-master ».
 
-Par exemple sous linux:
+Par exemple sous linux ou Mac:
 
 ```bash
 git clone https://gricad-gitlab.univ-grenoble-alpes.fr/faurefre/juce_template.git Template
@@ -95,12 +95,11 @@ On choisit un nom de projet, par exemple Projet1 et on écrit dans le terminal:
 Ce script :
 - télécharge le template s'il est absent
 - crée un nouveau dossier
-- renomme automatiquement le projet dans le `CMakeLists.txt`
 - initialise Git et ajoute un `.gitignore`
 
 Aller dans le répertoire du nouveau projet en écrivant 
 
-    cd $JUCE_PROJ/Projet1
+    cd ../Projet1
 
 
 
@@ -115,25 +114,6 @@ Dans le répertoire du projet écrire au choix:
 ./2_build.sh           # Compilation Debug (par défaut, à faire la 1ere fois)
 ./2_build.sh --fast    # Recompilation rapide (pas la 1ere fois)
 ./2_build.sh --release # Compilation Release (pour avoir une version finale optimisée)
-```
-
-
-
-#### 3.2 Options de compilations disponibles
-
-Au début du fichier `CMakeLists.txt`, ou en option de la commande  ./2_build.sh     tu peux activer/désactiver certains formats ou le packaging via les options suivantes :
-
-| Option              | Par défaut | Description                                        |
-|---------------------|------------|----------------------------------------------------|
-| `BUILD_STANDALONE`  | `ON`       | Génère l'application autonome (Standalone)         |
-| `BUILD_VST3`        | `ON`       | Génère un plugin VST3                              |
-| `BUILD_AU`          | `ON`       | Génère un plugin AU (macOS uniquement)             |
-| `ENABLE_PACKAGING`  | `ON`       | Active la génération de paquets (`.pkg`, `.deb`…)  |
-
-Par exemple, pour  ne compiler que le standalone sans packaging:
-
-```bash
-./2_build.sh  -DBUILD_VST3=OFF -DENABLE_PACKAGING=OFF
 ```
 
 
@@ -181,7 +161,7 @@ Script simple pour synchroniser votre projet avec un dépôt distant GitLab ou G
 
 ---
 
-## ✨ Astuce
+## ✨ Astuces
 
 Vous pouvez créer plusieurs projets très rapidement à partir du template :
 
@@ -191,6 +171,26 @@ cd ../NomDuProjet              # se déplace dans le nouveau répertoire
 ./2_build.sh                   # compile le projet
 ./3_exec.sh                    # exécute l'application
 ```
+
+
+
+#### 3.2 Options de compilations disponibles
+
+Au début du fichier `CMakeLists.txt`, ou en option de la commande  ./2_build.sh     tu peux activer/désactiver certains formats ou le packaging via les options suivantes :
+
+| Option              | Par défaut | Description                                        |
+|---------------------|------------|----------------------------------------------------|
+| `BUILD_STANDALONE`  | `ON`       | Génère l'application autonome (Standalone)         |
+| `BUILD_VST3`        | `ON`       | Génère un plugin VST3                              |
+| `BUILD_AU`          | `ON`       | Génère un plugin AU (macOS uniquement)             |
+| `ENABLE_PACKAGING`  | `ON`       | Active la génération de paquets (`.pkg`, `.deb`…)  |
+
+Par exemple, pour  ne compiler que le standalone sans packaging:
+
+```bash
+./2_build.sh  -DBUILD_VST3=OFF -DENABLE_PACKAGING=OFF
+```
+
 
 ---
 

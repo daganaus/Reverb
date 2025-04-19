@@ -46,11 +46,6 @@ fi
 echo "📁 Copie du template vers $NEW_PROJECT_NAME..."
 cp -r "$SOURCE_DIR" "$DEST_DIR"
 
-# ========== Mise à jour du nom dans CMakeLists.txt ==========
-CMAKE_PATH="$DEST_DIR/CMakeLists.txt"
-sed -i.bak "s/set(\s*TARGET_NAME\s\+.*)/set(TARGET_NAME $NEW_PROJECT_NAME)/" "$CMAKE_PATH"
-rm "$CMAKE_PATH.bak"
-
 # ========== Initialisation Git et .gitignore ==========
 cd "$DEST_DIR"
 git init > /dev/null
@@ -83,5 +78,6 @@ git add .gitignore
 
 # ========== Message final ==========
 echo "✅ Nouveau projet prêt : $DEST_DIR"
-echo "💡 Tapez maintenant : cd \"$DEST_DIR\""
-echo "   puis lancez ./2_build.sh pour compiler, ensuite ./3_exec.sh pour l'exécuter."
+echo "📂 Vous pouvez maintenant entrer dans le dossier du projet avec :"
+echo "cd \"$DEST_DIR\""
+echo "💡 Puis lancez ./2_build.sh pour compiler. Et ./3_exec.sh pour l'exécuter."

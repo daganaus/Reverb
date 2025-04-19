@@ -1,45 +1,50 @@
 #!/bin/bash
 
 # ================================================
-# Script d'exécution du binaire JUCE standalone
-# Détecte automatiquement le système et le chemin
+# Script d'exécution du binaire JUCE Standalone
 # Compatible Linux / macOS / Windows via WSL / Git Bash
 # ================================================
 
 set -e
 
-# Déduit automatiquement le chemin du répertoire JUCE_PROJ
 JUCE_PROJ=$(cd "$(dirname "$0")/.." && pwd)
 PROJECT="$(basename "$PWD")"
 BUILD_TYPE="Debug"
 
-LINUX_BIN="$JUCE_PROJ/$PROJECT/build/${PROJECT}_artefacts/$BUILD_TYPE/Standalone/Fred_$PROJECT"
-MACOS_APP="$JUCE_PROJ/$PROJECT/build/${PROJECT}_artefacts/$BUILD_TYPE/Standalone/Fred_$PROJECT.app"
-WIN_EXE="C:\\Users\\<NomUtilisateur>\\...\\$PROJECT\\build\\${PROJECT}_artefacts\\$BUILD_TYPE\\Standalone\\Fred_${PROJECT}.exe"
+# Trouve dynamiquement le nom d'artefact
+ARTEFACT_DIR=$(find "$JUCE_PROJ/$PROJECT/build" -maxdepth 1 -type d -name "*_artefacts" | head -n 1)
+APP_NAME=$(basename "$ARTEFACT_DIR" _artefacts) # Ex: Template → Fred_Template
+
+if [ -z "$ARTEFACT_DIR" ]; then
+  echo "❌ Aucun dossier *_artefacts trouvé dans build/. Avez-vous bien compilé ?"
+  exit 1
+fi
 
 OS_NAME=$(uname)
 
 echo "▶️ Lancement de l'application JUCE Standalone..."
 
 if [[ "$OS_NAME" == "Linux" ]]; then
-  if [ -f "$LINUX_BIN" ]; then
-    "$LINUX_BIN"
+  EXEC="$ARTEFACT_DIR/$BUILD_TYPE/Standalone/Fred_${APP_NAME}"
+  if [ -f "$EXEC" ]; then
+    "$EXEC"
   else
-    echo "❌ Binaire non trouvé : $LINUX_BIN"
+    echo "❌ Binaire non trouvé : $EXEC"
     echo "💡 Compilez d'abord avec ./2_build.sh"
   fi
 
 elif [[ "$OS_NAME" == "Darwin" ]]; then
-  if [ -d "$MACOS_APP" ]; then
-    open "$MACOS_APP"
+  APP="$ARTEFACT_DIR/$BUILD_TYPE/Standalone/Fred_${APP_NAME}.app"
+  if [ -d "$APP" ]; then
+    open "$APP"
   else
-    echo "❌ Application .app non trouvée : $MACOS_APP"
+    echo "❌ Application .app non trouvée : $APP"
     echo "💡 Compilez d'abord avec ./2_build.sh"
   fi
 
 elif [[ "$OS_NAME" == MINGW* || "$OS_NAME" == MSYS* || "$OS_NAME" == CYGWIN* ]]; then
   echo "💡 Sous Windows, ouvrez :"
-  echo "$WIN_EXE"
+  echo "C:\\Users\\<NomUtilisateur>\\...\\$PROJECT\\build\\${APP_NAME}_artefacts\\$BUILD_TYPE\\Standalone\\Fred_${APP_NAME}.exe"
 else
   echo "❌ Système non reconnu : $OS_NAME"
 fi
