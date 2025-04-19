@@ -84,4 +84,4 @@ git add .gitignore
 # ========== Message final ==========
 echo "✅ Nouveau projet prêt : $DEST_DIR"
 echo "💡 Tapez maintenant : cd \"$DEST_DIR\""
-echo "   puis lancez ./2_build.sh pour compiler. Puis utilisez ./3_exec.sh pour l'exécuter."
+echo "   puis lancez ./2_build.sh pour compiler, ensuite ./3_exec.sh pour l'exécuter."

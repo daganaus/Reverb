@@ -15,6 +15,8 @@ Ce dépôt est un **modèle minimal et fonctionnel** pour créer un plugin audio
       - [✅ 0.2. Télécharger  ce Template](#-02-télécharger--ce-template)
     - [🛠️ 2. Créer un nouveau projet](#️-2-créer-un-nouveau-projet)
     - [⚙️ 3. Compiler le projet](#️-3-compiler-le-projet)
+      - [⚙️ 3.2 Options de compilations disponibles](#️-32-options-de-compilations-disponibles)
+      - [Exemple : ne compiler que le standalone sans packaging](#exemple-ne-compiler-que-le-standalone-sans-packaging)
     - [▶️ 4. Lancer l'exécutable standalone](#️-4-lancer-lexécutable-standalone)
     - [🧹 5. Nettoyer le projet](#-5-nettoyer-le-projet)
     - [⬆️ 6. Pousser sur GitLab](#️-6-pousser-sur-gitlab)
@@ -118,6 +120,26 @@ Dans le répertoire du projet écrire au choix:
 ./2_build.sh --fast    # Recompilation rapide (pas la 1ere fois)
 ./2_build.sh --release # Compilation Release (pour avoir une version finale optimisée)
 ```
+
+
+
+#### ⚙️ 3.2 Options de compilations disponibles
+
+Dans le fichier `CMakeLists.txt`, ou en option de la commande  ./2_build.sh     tu peux activer/désactiver certains formats ou le packaging via les options suivantes :
+
+| Option              | Par défaut | Description                                        |
+|---------------------|------------|----------------------------------------------------|
+| `BUILD_STANDALONE`  | `ON`       | Génère l'application autonome (Standalone)         |
+| `BUILD_VST3`        | `ON`       | Génère un plugin VST3                              |
+| `BUILD_AU`          | `ON`       | Génère un plugin AU (macOS uniquement)             |
+| `ENABLE_PACKAGING`  | `ON`       | Active la génération de paquets (`.pkg`, `.deb`…)  |
+
+#### Exemple : ne compiler que le standalone sans packaging
+
+```bash
+./2_build.sh --fast -DBUILD_VST3=OFF -DENABLE_PACKAGING=OFF
+```
+
 
 ---
 
