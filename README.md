@@ -6,9 +6,6 @@ C'est un modèle de base pour démarrer un projet quelconque utilisant C++ et  J
 Ce projet est utilisé dans les  TP suivants:
 [TP_JUCE](https://www-fourier.ujf-grenoble.fr/~faure/enseignement/musique/TP_MAO/)
 
-[Aller à la section Linux](#1-linux)
-
-
 Dans la suite on suppose une arborescence similaire à: 
 
 
@@ -25,6 +22,11 @@ Dans la suite on suppose une arborescence similaire à:
 
 
 On suppose que JUCE est installé. On va ajouter le projet "Template"
+
+Selon votre ordinateur,
+[Aller à la section Linux](#1-linux)
+
+
 
 
 1 Linux
@@ -60,9 +62,9 @@ Dans un terminal, écrire:
 	cd build;
 	
 
-    JUCE_DIR=$JUCE_PROJ/JUCE
+    JUCE_DIR=$JUCE_PROJ/JUCE-master # où il y a CMakeLists
     #cmake  -DCMAKE_BUILD_TYPE=Release ..; # version Release mais compilation plus lente
-    cmake  ..;  # version debug mais compilation + rapide
+    cmake -DJUCE_DIR=$JUCE_DIR ..  # indique à CMake où trouver JUCE, version debug mais compilation + rapide
     
     cmake --build . --  -j$(nproc); # cat /proc/cpuinfo 
 
