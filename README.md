@@ -169,6 +169,7 @@ Vous pouvez créer plusieurs projets très rapidement à partir du template :
 
 ```bash
 ./1_setup.sh NomDuProjet       # crée un nouveau projet depuis le template
+cd ../NomDuProjet              # se déplace dans le nouveau répertoire
 ./2_build.sh                   # compile le projet
 ./3_exec.sh                    # exécute l'application
 ```
