@@ -6,11 +6,20 @@ C'est un modèle de base pour démarrer un projet quelconque utilisant C++ et  J
 Ce projet est utilisé dans les  TP suivants:
 [TP_JUCE](https://www-fourier.ujf-grenoble.fr/~faure/enseignement/musique/TP_MAO/)
 
-Dans la suite on suppose une arborescence similaire à: 
 
 
-    $HOME/c++/musique/JUCE_fred/
-    ├── JUCE/                       ← clone unique du dépôt JUCE (officiel ou fork)
+On suppose que vous avez un répertoire contenant tous vos projets de JUCE, appelé
+
+    $HOME/c++/musique/JUCE_fred/   
+
+On suppose que dans ce répertoire vous avez déjà installé  [JUCE-master](https://github.com/juce-framework/JUCE) 
+
+
+Dans la suite, on explique comment ajouter un projet selon un modèle proposé. On aura donc  une arborescence similaire à: 
+
+
+    $HOME/c++/musique/JUCE_fred/           ← répertoire selon votre cas
+    ├── JUCE-master/                       ← clone unique du dépôt JUCE
     ├── Projet1/
     │   ├── CMakeLists.txt
     │   ├── src/
@@ -21,10 +30,7 @@ Dans la suite on suppose une arborescence similaire à:
     │   └── build/
 
 
-On suppose que JUCE est installé. On va ajouter le projet "Template"
-
-Selon votre ordinateur,
-[Aller à la section Linux](#1-linux)
+Selon votre ordinateur, aller à la section [Linux](#1-linux) ou [Windows](#2-windows)
 
 
 
@@ -35,38 +41,21 @@ Selon votre ordinateur,
 
 Téléchargement sous Linux
 ---------------------------
-Dans un terminal, écrire:
+Dans un terminal, écrire (remplacer Projet par le nom du nouveau projet):
 
-    JUCE_PROJ="$HOME/c++/musique/JUCE_fred" # select your directory here
-    PROJECT="Template";
+    ./setup_juce.sh Projet
 
-	cd $JUCE_PROJ;
-
-
-    git clone https://gricad-gitlab.univ-grenoble-alpes.fr/faurefre/juce_template.git # telecharge projet et cree repertoire juce_template
-    mv juce_template $PROJECT # renomme le projet
 
 1.1 Compiler sous Linux 
 -----------
-Dans un terminal, écrire:
+Dans un terminal, écrire au choix:
 
 
-    JUCE_PROJ="$HOME/c++/musique/JUCE_fred" # select your directory here
-    PROJECT="Template";
-  
-	cd $JUCE_PROJ/$PROJECT;
+    ./build_juce.sh               # debug complet (nettoyage + cpack)
+    ./build_juce.sh --release     # release complet (nettoyage + cpack)
+    ./build_juce.sh --fast        # recompilation rapide
 
-	rm -rf build; # optionnel, detruit ancien
-	mkdir build;
 
-	cd build;
-	
-
-    JUCE_DIR=$JUCE_PROJ/JUCE-master # où il y a CMakeLists
-    #cmake  -DCMAKE_BUILD_TYPE=Release ..; # version Release mais compilation plus lente
-    cmake -DJUCE_DIR=$JUCE_DIR ..  # indique à CMake où trouver JUCE, version debug mais compilation + rapide
-    
-    cmake --build . --  -j$(nproc); # cat /proc/cpuinfo 
 
 
 
@@ -89,21 +78,23 @@ Dans un terminal, écrire:
 1.3 Poser le projet sur gitlab depuis Linux
 ------------------------
 
+    ./git_update.sh
 
 
-à partir de la deuxieme fois, dans un terminal, écrire:
 
 
 
-    JUCE_PROJ="$HOME/c++/musique/JUCE_fred" # select your directory here
-    PROJECT="Template";
+2 Windows
+==========
 
-    cd  $JUCE_PROJ/$PROJECT;
-    rm -rf Builds JuceLibraryCode # created by projucer
-    find . -type f \( -name '*~' \) -delete # supprime les fichiers temporaires inutiles dans les sous repertoires
-    git add -A # ajoute toutes les modifs
-    git commit -a  -m "mise a jour"
-    git push
+2.1 Compiler sous windows
+-----------
+Dans un terminal, écrire au choix:
+
+    .\build_juce.ps1               # debug complet
+    .\build_juce.ps1 --release     # release complet
+    .\build_juce.ps1 --fast        # recompilation rapide
+
 
 
 
