@@ -111,9 +111,21 @@ Aller dans le répertoire du nouveau projet en écrivant
 Dans le répertoire du projet écrire au choix:
 
 ```bash
-./2_build.sh           # Compilation Debug (par défaut, à faire la 1ere fois)
-./2_build.sh --fast    # Recompilation rapide (pas la 1ere fois)
-./2_build.sh --release # Compilation Release (pour avoir une version finale optimisée)
+ # Compilation Debug (par défaut, à faire la 1ere fois)
+./2_build.sh          
+```
+ou 
+
+```bash
+# Recompilation rapide (pas la 1ere fois)
+./2_build.sh --fast    
+```
+
+ou
+
+```bash
+# Compilation Release (pour avoir une version finale optimisée)
+./2_build.sh --release 
 ```
 
 
