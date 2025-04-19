@@ -1,6 +1,7 @@
 # 🎹 Template JUCE multi-plateforme (Linux, macOS, Windows)
 
 Ce dépôt est un **modèle minimal et fonctionnel** pour créer un plugin audio ou une application standalone avec **JUCE** et **CMake**, compatible avec **Linux, macOS et Windows**.
+Il est destiné en particulier à des [TP](https://www-fourier.ujf-grenoble.fr/~faure/enseignement/musique/TP_MAO/) pour étudiants en Physique-Musicologie à l'UGA.
 
 ---
 
@@ -8,15 +9,13 @@ Ce dépôt est un **modèle minimal et fonctionnel** pour créer un plugin audio
 
 - [🎹 Template JUCE multi-plateforme (Linux, macOS, Windows)](#-template-juce-multi-plateforme-linux-macos-windows)
   - [📋 Menu rapide](#-menu-rapide)
-  - [📁](#)
   - [🚀 Étapes d'utilisation](#-étapes-dutilisation)
     - [✅ 0. A faire une seule fois avant le premier projet](#-0-a-faire-une-seule-fois-avant-le-premier-projet)
       - [✅ 0.1. Choisir un répertoire et télécharger JUCE](#-01-choisir-un-répertoire-et-télécharger-juce)
       - [✅ 0.2. Télécharger  ce Template](#-02-télécharger--ce-template)
     - [🛠️ 2. Créer un nouveau projet](#️-2-créer-un-nouveau-projet)
     - [⚙️ 3. Compiler le projet](#️-3-compiler-le-projet)
-      - [⚙️ 3.2 O ptions de compilations disponibles](#️-32-o-ptions-de-compilations-disponibles)
-      - [Exemple : ne compiler que le standalone sans packaging](#exemple-ne-compiler-que-le-standalone-sans-packaging)
+      - [3.2 Options de compilations disponibles](#32-options-de-compilations-disponibles)
     - [▶️ 4. Lancer l'exécutable standalone](#️-4-lancer-lexécutable-standalone)
     - [🧹 5. Nettoyer le projet](#-5-nettoyer-le-projet)
     - [⬆️ 6. Pousser sur GitLab](#️-6-pousser-sur-gitlab)
@@ -24,9 +23,6 @@ Ce dépôt est un **modèle minimal et fonctionnel** pour créer un plugin audio
   - [✨ Astuce](#-astuce)
   - [📬 Contact](#-contact)
 
----
-
-## 📁 
 
 ---
 
@@ -123,7 +119,7 @@ Dans le répertoire du projet écrire au choix:
 
 
 
-#### ⚙️ 3.2 O ptions de compilations disponibles
+#### 3.2 Options de compilations disponibles
 
 Au début du fichier `CMakeLists.txt`, ou en option de la commande  ./2_build.sh     tu peux activer/désactiver certains formats ou le packaging via les options suivantes :
 
@@ -134,7 +130,7 @@ Au début du fichier `CMakeLists.txt`, ou en option de la commande  ./2_build.sh
 | `BUILD_AU`          | `ON`       | Génère un plugin AU (macOS uniquement)             |
 | `ENABLE_PACKAGING`  | `ON`       | Active la génération de paquets (`.pkg`, `.deb`…)  |
 
-#### Exemple : ne compiler que le standalone sans packaging
+Par exemple, pour  ne compiler que le standalone sans packaging:
 
 ```bash
 ./2_build.sh  -DBUILD_VST3=OFF -DENABLE_PACKAGING=OFF
