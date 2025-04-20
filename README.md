@@ -43,7 +43,7 @@ Avant de commencer, on choisit un répertoire existant  (par exemple le réperto
 Dans ce répertoire, il faut au préalable avoir  installé JUCE  dans le répertoire JUCE-master.    Si ce n'est pas déjà fait, sur le site, [JUCE](https://juce.com/download/), cliquer sur « Download from GitHub », puis bouton « Code » et « Download ZIP » et extraire le fichier téléchargé dans ce répertoire (ex: TP). Cela crée le répertoire « JUCE-master ».
 
 
-Alternative pour télécharger JUCE sous linux ou Mac: dans un terminal depuis ce répertoire écrire
+Alternative pour télécharger: dans un terminal depuis ce répertoire écrire
 
     
     git clone --recurse-submodules https://github.com/juce-framework/JUCE.git
@@ -53,9 +53,8 @@ Alternative pour télécharger JUCE sous linux ou Mac: dans un terminal depuis c
 
 #### ✅ 0.2. Télécharger  ce Template
 
-Dans ce répertoire on télécharge ce projet Template il faut au préalable avoir  installé JUCE  dans le répertoire JUCE-master.    Si ce n'est pas déjà fait, sur le site, [JUCE](https://juce.com/download/), cliquer sur « Download from GitHub », puis bouton « Code » et « Download ZIP » et extraire le fichier téléchargé dans ce répertoire (ex: TP). Cela crée le répertoire « JUCE-master ».
 
-Par exemple sous linux ou Mac:
+Dans un terminal:
 
 ```bash
 git clone https://gricad-gitlab.univ-grenoble-alpes.fr/faurefre/juce_template.git Template
@@ -77,10 +76,16 @@ $HOME/TP/
 
 ### 🛠️ 2. Créer un nouveau projet
 
-On choisit un nom de projet, par exemple Projet1 et on écrit dans le terminal:
+On choisit un nom de projet, par exemple Projet1 et on écrit dans le terminal depuis le répertoire Template:
 
+Sous linux et Mac écrire:
 ```bash
 ./1_setup.sh Projet1
+```
+
+Sous Windows écrire:
+```bash
+./1_setup.ps1 Projet1
 ```
 
 Ce script :
@@ -99,24 +104,28 @@ Aller dans le répertoire du nouveau projet en écrivant
 
 ### ⚙️ 3. Compiler le projet
 
-Dans le répertoire du projet écrire au choix:
+Dans le répertoire du projet écrire au choix une des lignes suivante:
+
+Sous linux ou Mac:
 
 ```bash
  # Compilation Debug (par défaut, à faire la 1ere fois)
 ./2_build.sh          
-```
-ou 
-
-```bash
-# Recompilation rapide (pas la 1ere fois)
-./2_build.sh --fast    
-```
-
-ou
-
-```bash
-# Compilation Release (pour avoir une version finale optimisée)
+# ou Recompilation rapide (pas la 1ere fois)
+./2_build.sh --fast   
+# ou Compilation Release (pour avoir une version finale optimisée)
 ./2_build.sh --release 
+```
+
+Sous Windows:
+
+```bash
+ # Compilation Debug (par défaut, à faire la 1ere fois)
+./2_build.ps1          
+# ou Recompilation rapide (pas la 1ere fois)
+./2_build.ps1 --fast   
+# ou Compilation Release (pour avoir une version finale optimisée)
+./2_build.ps1 --release 
 ```
 
 
@@ -126,21 +135,36 @@ ou
 
 Dans le répertoire du projet écrire:
 
+Sous linux ou Mac:
+
 ```bash
 ./3_exec.sh
 ```
 
+Sous Windows:
+
+```bash
+./3_exec.ps1
+```
 
 
 ---
 
 ### 🧹 5. Nettoyer le projet
 
+
+Sous linux ou Mac:
 ```bash
 ./4_clean.sh
 ```
 
-Supprime le dossier `build/` et tous les fichiers intermédiaires (artefacts de packaging, caches, etc).
+Sous Windows:
+```bash
+./4_clean.ps1
+```
+
+
+Cela supprime le dossier `build/` et tous les fichiers intermédiaires (artefacts de packaging, caches, etc).
 
 ---
 

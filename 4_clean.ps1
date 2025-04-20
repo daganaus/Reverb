@@ -5,30 +5,29 @@
 # ================================================
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$JUCE_PROJ = Split-Path $ScriptDir -Parent
 $PROJECT = Split-Path $ScriptDir -Leaf
 $BUILD_DIR = Join-Path $ScriptDir "build"
 
-Write-Host "🧹 Nettoyage du projet : $PROJECT"
+Write-Host "`nNettoyage du projet : $PROJECT"
 
 # Suppression du dossier build
 if (Test-Path $BUILD_DIR) {
     Remove-Item -Recurse -Force $BUILD_DIR
-    Write-Host "✅ Dossier $BUILD_DIR supprimé."
+    Write-Host "Dossier $BUILD_DIR supprime."
 } else {
-    Write-Host "ℹ️ Aucun dossier $BUILD_DIR à supprimer."
+    Write-Host "Aucun dossier $BUILD_DIR a supprimer."
 }
 
 # Suppression des fichiers de packaging et temporaires
-$extraFiles = @(
+$patterns = @(
     "install_manifest.txt",
     "*.tar.gz", "*.pkg", "*.deb", "*.exe", "*.zip",
     "CMakeLists.txt.bak", "*.old", "*.tmp"
 )
 
-foreach ($pattern in $extraFiles) {
+foreach ($pattern in $patterns) {
     Get-ChildItem -Path $ScriptDir -Filter $pattern -File -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue
 }
 
-Write-Host "✅ Nettoyage terminé."
-Write-Host "💡 Vous pouvez relancer .\\2_build.ps1 pour recompiler."
+Write-Host "Nettoyage termine."
+Write-Host "Vous pouvez relancer .\\2_build.ps1 pour recompiler.`n"

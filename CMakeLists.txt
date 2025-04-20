@@ -140,9 +140,14 @@ if(ENABLE_PACKAGING)
         install(TARGETS ${TARGET_NAME}
             LIBRARY DESTINATION "VST3"
             COMPONENT VST3)
+    
+     
         install(TARGETS ${TARGET_NAME}_Standalone
+            CONFIGURATIONS Debug Release
             RUNTIME DESTINATION "${TARGET_NAME}"
             COMPONENT Standalone)
+        
+
 
         set(CPACK_GENERATOR "NSIS")
         set(CPACK_PACKAGE_NAME "${TARGET_NAME}")
