@@ -21,6 +21,7 @@ Il est destiné en particulier à des [TP](https://www-fourier.ujf-grenoble.fr/~
   - [🔗 Dépendances nécessaires](#-dépendances-nécessaires)
   - [✨ Astuces](#-astuces)
       - [3.2 Options de compilations disponibles](#32-options-de-compilations-disponibles)
+  - [A faire (TO DO)](#a-faire-to-do)
   - [📬 Contact](#-contact)
 
 
@@ -218,6 +219,14 @@ Par exemple, pour  ne compiler que le standalone sans packaging:
 ./2_build.sh  -DBUILD_VST3=OFF -DENABLE_PACKAGING=OFF
 ```
 
+---
+
+## A faire (TO DO)
+
+ - Incorporer le script make_f et ajouter la doc
+ - Mettre les jauges de latence dans un onglet "moniteur"
+ - Rendre compatible avec ROOT du cern et Armadillo?
+ 
 
 ---
 
