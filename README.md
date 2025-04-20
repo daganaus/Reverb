@@ -37,24 +37,15 @@ Il est destiné en particulier à des [TP](https://www-fourier.ujf-grenoble.fr/~
 #### ✅ 0.1. Choisir un répertoire et télécharger JUCE
 
 
-Avant de commencer, on choisit un répertoire existant  (par exemple le répertoire TP ou $HOME/c++/musique/JUCE_fred/ ) où seront stockés tous nos projets et où on va télécharger (cloner)  ce dépôt Template. Pour écrire dans un terminal
+Avant de commencer, on choisit un répertoire existant  (par exemple le répertoire TP) où seront stockés tous nos projets et où on va télécharger (cloner)  ce dépôt Template. 
 
-    export JUCE_PROJ=$HOME/TP
-
-  ou
-   
-    export JUCE_PROJ=$HOME/c++/musique/JUCE_fred
-
-  et
-
-    cd $JUCE_PROJ
 
 Dans ce répertoire, il faut au préalable avoir  installé JUCE  dans le répertoire JUCE-master.    Si ce n'est pas déjà fait, sur le site, [JUCE](https://juce.com/download/), cliquer sur « Download from GitHub », puis bouton « Code » et « Download ZIP » et extraire le fichier téléchargé dans ce répertoire (ex: TP). Cela crée le répertoire « JUCE-master ».
 
 
 Alternative pour télécharger JUCE sous linux ou Mac: dans un terminal depuis ce répertoire écrire
 
-    cd "$JUCE_PROJ"
+    
     git clone --recurse-submodules https://github.com/juce-framework/JUCE.git
     mv JUCE JUCE-master 
 
@@ -62,7 +53,7 @@ Alternative pour télécharger JUCE sous linux ou Mac: dans un terminal depuis c
 
 #### ✅ 0.2. Télécharger  ce Template
 
-Dans ce répertoire $JUCE_PROJ, on télécharge ce projet Template il faut au préalable avoir  installé JUCE  dans le répertoire JUCE-master.    Si ce n'est pas déjà fait, sur le site, [JUCE](https://juce.com/download/), cliquer sur « Download from GitHub », puis bouton « Code » et « Download ZIP » et extraire le fichier téléchargé dans ce répertoire (ex: TP). Cela crée le répertoire « JUCE-master ».
+Dans ce répertoire on télécharge ce projet Template il faut au préalable avoir  installé JUCE  dans le répertoire JUCE-master.    Si ce n'est pas déjà fait, sur le site, [JUCE](https://juce.com/download/), cliquer sur « Download from GitHub », puis bouton « Code » et « Download ZIP » et extraire le fichier téléchargé dans ce répertoire (ex: TP). Cela crée le répertoire « JUCE-master ».
 
 Par exemple sous linux ou Mac:
 
