@@ -213,7 +213,7 @@ depuis le répertoire du projet:
   ./git_update.sh
   ```
 
-Script simple pour synchroniser votre projet avec un dépôt distant GitLab ou GitHub.
+c'est un script simple pour synchroniser votre projet avec un dépôt distant GitLab ou GitHub.
 
 ---
 
