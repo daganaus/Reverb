@@ -1,11 +1,11 @@
-# 🎹 Template JUCE multi-plateforme (Linux, macOS, Windows)
+# Template JUCE multi-plateforme (Linux, macOS, Windows)
 
 Ce dépôt est un **modèle minimal et fonctionnel** pour créer un plugin audio ou une application standalone avec **JUCE** et **CMake**, compatible avec **Linux, macOS et Windows**.
 Il est destiné en particulier à des [TP](https://www-fourier.ujf-grenoble.fr/~faure/enseignement/musique/TP_MAO/) pour étudiants en Physique-Musicologie à l'UGA.
 
 ---
 
-## 📋 Menu rapide
+## Table des matières
 
 - [🎹 Template JUCE multi-plateforme (Linux, macOS, Windows)](#-template-juce-multi-plateforme-linux-macos-windows)
   - [📋 Menu rapide](#-menu-rapide)
@@ -14,10 +14,11 @@ Il est destiné en particulier à des [TP](https://www-fourier.ujf-grenoble.fr/~
       - [✅ 0.1. Choisir un répertoire et télécharger JUCE](#-01-choisir-un-répertoire-et-télécharger-juce)
       - [✅ 0.2. Télécharger  ce Template](#-02-télécharger--ce-template)
     - [🛠️ 2. Créer un nouveau projet](#️-2-créer-un-nouveau-projet)
-    - [⚙️ 3. Compiler le projet](#️-3-compiler-le-projet)
-    - [▶️ 4. Lancer l'exécutable standalone](#️-4-lancer-lexécutable-standalone)
-    - [🧹 5. Nettoyer le projet](#-5-nettoyer-le-projet)
-    - [⬆️ 6. Pousser sur GitLab](#️-6-pousser-sur-gitlab)
+    - [⚙️ 3. Ecriture automatique  du code GUI pour JUCE: com.h, com.cc](#️-3-ecriture-automatique--du-code-gui-pour-juce-comh-comcc)
+    - [⚙️ 4. Compiler le projet](#️-4-compiler-le-projet)
+    - [▶️ 5. Lancer l'exécutable standalone](#️-5-lancer-lexécutable-standalone)
+    - [🧹 6. Nettoyer le projet](#-6-nettoyer-le-projet)
+    - [⬆️ 7. Déposer le projet  sur GitLab](#️-7-déposer-le-projet--sur-gitlab)
   - [🔗 Dépendances nécessaires](#-dépendances-nécessaires)
   - [✨ Astuces](#-astuces)
       - [3.2 Options de compilations disponibles](#32-options-de-compilations-disponibles)
@@ -27,35 +28,38 @@ Il est destiné en particulier à des [TP](https://www-fourier.ujf-grenoble.fr/~
 
 ---
 
-## 🚀 Étapes d'utilisation
+#  Étapes d'utilisation
 
 
 
-### ✅ 0. A faire une seule fois avant le premier projet
+## 1. A faire une seule fois avant le premier projet
 
 
 
-#### ✅ 0.1. Choisir un répertoire et télécharger JUCE
+###  1.1. Choisir un répertoire et télécharger JUCE
 
 
-Avant de commencer, on choisit un répertoire existant  (par exemple le répertoire TP) où seront stockés tous nos projets et où on va télécharger (cloner)  ce dépôt Template. 
+Avant de commencer, on choisit un répertoire existant,  par exemple le répertoire `TP` où seront stockés tous nos projets utilisant JUCE.
+
+- Télécharger JUCE:
+
+  sur le site, [JUCE](https://juce.com/download/), cliquer sur « Download from GitHub », puis bouton « Code » et « Download ZIP » et extraire le fichier téléchargé dans ce répertoire (ex: `TP`). Cela crée le répertoire « JUCE-master ».
 
 
-Dans ce répertoire, il faut au préalable avoir  installé JUCE  dans le répertoire JUCE-master.    Si ce n'est pas déjà fait, sur le site, [JUCE](https://juce.com/download/), cliquer sur « Download from GitHub », puis bouton « Code » et « Download ZIP » et extraire le fichier téléchargé dans ce répertoire (ex: TP). Cela crée le répertoire « JUCE-master ».
+- Alternative pour télécharger JUCE:
 
-
-Alternative pour télécharger: dans un terminal depuis ce répertoire écrire
+  dans un terminal depuis ce répertoire (ex: `TP`) écrire
 
     
-    git clone --recurse-submodules https://github.com/juce-framework/JUCE.git
-    mv JUCE JUCE-master 
+      git clone --recurse-submodules https://github.com/juce-framework/JUCE.git
+      mv JUCE JUCE-master 
 
 
 
-#### ✅ 0.2. Télécharger  ce Template
+###  1.2. Télécharger  ce Template
 
 
-Dans un terminal:
+Dans un terminal, dans ce répertoire (ex: `TP`) écrire:
 
 ```bash
 git clone https://gricad-gitlab.univ-grenoble-alpes.fr/faurefre/juce_template.git Template
@@ -75,83 +79,115 @@ $HOME/TP/
 
 ---
 
-### 🛠️ 2. Créer un nouveau projet
+## 2. Créer un nouveau projet
 
-On choisit un nom de projet, par exemple Projet1 et on écrit dans le terminal depuis le répertoire Template:
+On choisit un nom de projet, par exemple `Projet1` et on écrit dans le terminal depuis le répertoire `Template`:
 
-Sous linux et Mac écrire:
-```bash
-./1_setup.sh Projet1
-```
+- Sous linux et Mac écrire:
 
-Sous Windows écrire:
-```bash
-./1_setup.ps1 Projet1
-```
+  ```bash
+  ./1_setup.sh Projet1
+  ```
+
+- Sous Windows écrire:
+  ```bash
+  ./1_setup.ps1 Projet1
+  ```
 
 Ce script :
 - télécharge le template s'il est absent
-- crée un nouveau dossier
-- initialise Git et ajoute un `.gitignore`
+- Copie ce template dans un nouveau répertoire
+- Se déplace dans ce nouveau répertoire du nouveau projet. Ou le faire soi-même.
 
-Aller dans le répertoire du nouveau projet en écrivant 
-
-    cd ../Projet1
-
-
-
+<!-- OK  -->
 
 ---
 
-### ⚙️ 3. Compiler le projet
+## 3. Compiler le projet
 
-Dans le répertoire du projet écrire au choix une des lignes suivante:
+Dans le répertoire du projet écrire **au choix** une des lignes suivante:
 
-Sous linux ou Mac:
+- Sous linux ou Mac:
 
-```bash
- # Compilation Debug (par défaut, à faire la 1ere fois)
-./2_build.sh          
-# ou Recompilation rapide (pas la 1ere fois)
-./2_build.sh --fast   
-# ou Compilation Release (pour avoir une version finale optimisée)
-./2_build.sh --release 
-```
+  ```bash
+  # Compilation Debug (par défaut, à faire la 1ere fois)
+  ./2_build.sh          
+  # ou Recompilation rapide (pas la 1ere fois)
+  ./2_build.sh --fast   
+  # ou Compilation Release (pour avoir une version finale optimisée)
+  ./2_build.sh --release 
+  ```
 
-Sous Windows:
+<!-- OK  -->
 
-```bash
- # Compilation Debug (par défaut, à faire la 1ere fois)
-./2_build.ps1          
-# ou Recompilation rapide (pas la 1ere fois)
-./2_build.ps1 --fast   
-# ou Compilation Release (pour avoir une version finale optimisée)
-./2_build.ps1 --release 
-```
+- Sous Windows:
 
+  ```bash
+  # Compilation Debug (par défaut, à faire la 1ere fois)
+  ./2_build.ps1          
+  # ou Recompilation rapide (pas la 1ere fois)
+  ./2_build.ps1 --fast   
+  # ou Compilation Release (pour avoir une version finale optimisée)
+  ./2_build.ps1 --release 
+  ```
+<!-- OK  -->
 
 ---
 
-### ▶️ 4. Lancer l'exécutable standalone
+## 4. Lancer l'exécutable standalone
 
 Dans le répertoire du projet écrire:
 
-Sous linux ou Mac:
+- Sous linux ou Mac:
 
-```bash
-./3_exec.sh
-```
+  ```bash
+  ./3_exec.sh
+  ```
 
-Sous Windows:
+- Sous Windows:
 
-```bash
-./3_exec.ps1
-```
+  ```bash
+  ./3_exec.ps1
+  ```
+<!-- OK  -->
 
 
 ---
 
-### 🧹 5. Nettoyer le projet
+## 5. Ecriture automatique  du code GUI (des widgets) pour JUCE: com.h, com.cc
+
+On peut utiliser un script appelé `makef`pour ecrire automatique le code c++ concernant les widgets de l'interface GUI de JUCE. Au départ vous donnez l'information sur les widgets dans les commentaires de votre code (voir documentation sur `makef`).
+
+
+- Au préalable il faut renseigner  les informations voulues dans le fichier de configuration `makef.config`
+  Les explications sont donnés ci-dessous.
+
+Dans les lignes suivantes (modifier si besoin),
+ - $REP est le répertoire du projet
+ - $REP/Source est le répertoire qui contient les fichiers sources .h et .cc de votre projet.
+ - $FILE est le fichier de départ indiqué depuis le répertoire $REP
+ - $CONFIG est le fichier de configuration  `makef.config` contenant les paramètres pour makef.
+
+
+Dans un terminal, se placer dans le répertoire du projet, et écrire:
+
+
+    REP=.
+    FILE=editor/PluginEditor.cc
+    CONFIG="$REP"/makef.config
+
+    makef "$REP"/Source "$FILE" "$CONFIG" main JUCE
+    rm -rf "$REP"/Source/editor/Makefile*
+    rm -rf "$REP"/Source/editor/README_tmp
+    
+
+
+résultat: cela écrit les fichiers com.h, com.cc dans le répertoire $REP/Source, prêts à la compilation.
+
+
+---
+
+### 🧹 6. Nettoyer le projet
 
 
 Sous linux ou Mac:
@@ -169,11 +205,13 @@ Cela supprime le dossier `build/` et tous les fichiers intermédiaires (artefact
 
 ---
 
-### ⬆️ 6. Pousser sur GitLab
+### ⬆️ 7. Déposer le projet  sur GitLab
 
-```bash
-./git_update.sh
-```
+depuis le répertoire du projet:
+
+  ```bash
+  ./git_update.sh
+  ```
 
 Script simple pour synchroniser votre projet avec un dépôt distant GitLab ou GitHub.
 

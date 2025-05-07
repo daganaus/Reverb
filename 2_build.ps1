@@ -71,7 +71,13 @@ if ($FULL_REBUILD -and $BUILD_TYPE -eq "Release" -and (Test-Path $exePath)) {
     Write-Host "Packaging ignore (build Debug)"
 }
 
+# Retour dans le dossier du projet
+Set-Location $ScriptDir
+Write-Host "Retour dans le dossier du projet : $ScriptDir"
+
+
 # Message final
 Write-Host ""
 Write-Host "Compilation terminee."
-Write-Host "Lancez ensuite : .\\3_exec.ps1"
+Write-Host "Lancez ensuite : .\3_exec.ps1"
+

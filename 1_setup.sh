@@ -76,6 +76,7 @@ EOF
 
 git add .gitignore
 
+
 # ========== Message final ==========
 echo "✅ Nouveau projet prêt : $DEST_DIR"
 echo "📂 Vous pouvez maintenant entrer dans le dossier du projet avec :"
