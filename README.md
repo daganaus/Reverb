@@ -5,25 +5,29 @@ Il est destiné en particulier à des [TP](https://www-fourier.ujf-grenoble.fr/~
 
 ---
 
-## Table des matières
 
-- [🎹 Template JUCE multi-plateforme (Linux, macOS, Windows)](#-template-juce-multi-plateforme-linux-macos-windows)
-  - [📋 Menu rapide](#-menu-rapide)
-  - [🚀 Étapes d'utilisation](#-étapes-dutilisation)
-    - [✅ 0. A faire une seule fois avant le premier projet](#-0-a-faire-une-seule-fois-avant-le-premier-projet)
-      - [✅ 0.1. Choisir un répertoire et télécharger JUCE](#-01-choisir-un-répertoire-et-télécharger-juce)
-      - [✅ 0.2. Télécharger  ce Template](#-02-télécharger--ce-template)
-    - [🛠️ 2. Créer un nouveau projet](#️-2-créer-un-nouveau-projet)
-    - [⚙️ 3. Ecriture automatique  du code GUI pour JUCE: com.h, com.cc](#️-3-ecriture-automatique--du-code-gui-pour-juce-comh-comcc)
-    - [⚙️ 4. Compiler le projet](#️-4-compiler-le-projet)
-    - [▶️ 5. Lancer l'exécutable standalone](#️-5-lancer-lexécutable-standalone)
-    - [🧹 6. Nettoyer le projet](#-6-nettoyer-le-projet)
-    - [⬆️ 7. Déposer le projet  sur GitLab](#️-7-déposer-le-projet--sur-gitlab)
+<!-- TOC -->- [Template JUCE multi-plateforme (Linux, macOS, Windows)](#template-juce-multi-plateforme-linux-macos-windows)
+- [Template JUCE multi-plateforme (Linux, macOS, Windows)](#template-juce-multi-plateforme-linux-macos-windows)
+- [Étapes d'utilisation](#étapes-dutilisation)
+  - [1. A faire une seule fois avant le premier projet](#1-a-faire-une-seule-fois-avant-le-premier-projet)
+    - [1.1. Choisir un répertoire et télécharger JUCE](#11-choisir-un-répertoire-et-télécharger-juce)
+    - [1.2. Télécharger  ce Template](#12-télécharger--ce-template)
+  - [2. Créer un nouveau projet](#2-créer-un-nouveau-projet)
+  - [3. Compiler le projet](#3-compiler-le-projet)
+  - [4. Lancer l'exécutable standalone](#4-lancer-lexécutable-standalone)
+- [5. (Optionnel) Ecriture automatique  du code GUI (des widgets) pour JUCE: com.h, com.cc](#5-optionnel-ecriture-automatique--du-code-gui-des-widgets-pour-juce-comh-comcc)
+  - [5.1 Exemple d'utilisation  avec le projet Template](#51-exemple-dutilisation--avec-le-projet-template)
+- [6. (Optionnel) Nettoyer le projet](#6-optionnel-nettoyer-le-projet)
+- [7. Déposer le projet  sur GitLab](#7-déposer-le-projet--sur-gitlab)
   - [🔗 Dépendances nécessaires](#-dépendances-nécessaires)
-  - [✨ Astuces](#-astuces)
-      - [3.2 Options de compilations disponibles](#32-options-de-compilations-disponibles)
-  - [A faire (TO DO)](#a-faire-to-do)
-  - [📬 Contact](#-contact)
+- [8. Astuces](#8-astuces)
+  - [8.1 Options de compilations disponibles](#81-options-de-compilations-disponibles)
+- [9. A faire (TO DO)](#9-a-faire-to-do)
+- [📬 Contact](#-contact)
+
+<!-- TOC END -->
+
+
 
 
 ---
@@ -154,58 +158,63 @@ Dans le répertoire du projet écrire:
 
 ---
 
-## 5. Ecriture automatique  du code GUI (des widgets) pour JUCE: com.h, com.cc
+# 5. (Optionnel) Ecriture automatique  du code GUI (des widgets) pour JUCE: com.h, com.cc
 
-On peut utiliser un script appelé `makef`pour ecrire automatique le code c++ concernant les widgets de l'interface GUI de JUCE. Au départ vous donnez l'information sur les widgets dans les commentaires de votre code (voir documentation sur `makef`).
+On peut utiliser un script appelé `makef`pour écrire automatique le code c++ concernant les widgets de l'interface GUI de JUCE. 
 
+Voici le logiciel `makef`à installer et configurer:
 
-- Au préalable il faut renseigner  les informations voulues dans le fichier de configuration `makef.config`
-  Les explications sont donnés ci-dessous.
-
-Dans les lignes suivantes (modifier si besoin),
- - $REP est le répertoire du projet
- - $REP/Source est le répertoire qui contient les fichiers sources .h et .cc de votre projet.
- - $FILE est le fichier de départ indiqué depuis le répertoire $REP
- - $CONFIG est le fichier de configuration  `makef.config` contenant les paramètres pour makef.
+https://gricad-gitlab.univ-grenoble-alpes.fr/faurefre/makef
 
 
-Dans un terminal, se placer dans le répertoire du projet, et écrire:
+## 5.1 Exemple d'utilisation  avec le projet Template
 
 
-    REP=.
-    FILE=editor/PluginEditor.cc
-    CONFIG="$REP"/makef.config
+On supposer que vous avez installé le logiciel `makef` et que vous avez créé un projet `Projet` (ou autre nom) à partir de `Template`.
 
-    makef "$REP"/Source "$FILE" "$CONFIG" main JUCE
-    rm -rf "$REP"/Source/editor/Makefile*
-    rm -rf "$REP"/Source/editor/README_tmp
-    
+- Ouvrir le fichier Source/editor/manager.h et dans la classe Manager, vers la ligne 50 ajoutez  la ligne suivante:
+
+      int essai = 3; //  make_gui =  N(ZT("mon onglet"),"essai") help ="un essai de widget"
+
+- Modifier les répertoires dans le fichcier `makef.config`
+
+- Dans un terminal, se placer dans le répertoire du projet, et écrire:
 
 
-résultat: cela écrit les fichiers com.h, com.cc dans le répertoire $REP/Source, prêts à la compilation.
+      makef Source editor/PluginEditor.cc  makef.config  main   JUCE
 
+
+
+  résultat: cela écrit les fichiers com.h, com.cc dans le répertoire $REP/Source, prêts à la compilation.      
+
+- Vous recompilez (en mode fast) et exécutez le projet comme expliqué ci-dessus.
+
+  résultat: Il apparaitra un onglet appelé "mon onglet" qui contient un widget avec la valeur numérique de la variable essai que l'on peut modifier. Il y a aussi le message d'aide si la souris passe dessus.
+
+<!-- OK  sous Linux -->
 
 ---
 
-### 🧹 6. Nettoyer le projet
+#  6. (Optionnel) Nettoyer le projet
 
 
-Sous linux ou Mac:
-```bash
-./4_clean.sh
-```
+- Sous linux ou Mac:
+  ```bash
+  ./4_clean.sh
+  ```
 
-Sous Windows:
-```bash
-./4_clean.ps1
-```
+- Sous Windows:
+
+  ```bash
+  ./4_clean.ps1
+  ```
 
 
 Cela supprime le dossier `build/` et tous les fichiers intermédiaires (artefacts de packaging, caches, etc).
 
 ---
 
-### ⬆️ 7. Déposer le projet  sur GitLab
+#  7. Déposer le projet  sur GitLab
 
 depuis le répertoire du projet:
 
@@ -227,20 +236,11 @@ c'est un script simple pour synchroniser votre projet avec un dépôt distant Gi
 
 ---
 
-## ✨ Astuces
 
-Vous pouvez créer plusieurs projets très rapidement à partir du template :
-
-```bash
-./1_setup.sh NomDuProjet       # crée un nouveau projet depuis le template
-cd ../NomDuProjet              # se déplace dans le nouveau répertoire
-./2_build.sh                   # compile le projet
-./3_exec.sh                    # exécute l'application
-```
+# 8. Astuces
 
 
-
-#### 3.2 Options de compilations disponibles
+## 8.1 Options de compilations disponibles
 
 Au début du fichier `CMakeLists.txt`, ou en option de la commande  ./2_build.sh     tu peux activer/désactiver certains formats ou le packaging via les options suivantes :
 
@@ -259,7 +259,7 @@ Par exemple, pour  ne compiler que le standalone sans packaging:
 
 ---
 
-## A faire (TO DO)
+# 9. A faire (TO DO)
 
  - Incorporer le script make_f et ajouter la doc
  - Mettre les jauges de latence dans un onglet "moniteur"
@@ -268,7 +268,7 @@ Par exemple, pour  ne compiler que le standalone sans packaging:
 
 ---
 
-## 📬 Contact
+# 📬 Contact
 
 Auteur : Frédéric Faure  
 📧 [frederic.faure@univ-grenoble-alpes.fr](mailto:frederic.faure@univ-grenoble-alpes.fr)  

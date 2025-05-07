@@ -1,0 +1,15 @@
+This project can be compiled and executed on  Linux, Unix, MacOs, Windows systems.
+
+On Linux and MacOs,
+--------------------
+To compile, write in a terminal: 	make all 
+On Windows 10,
+--------------------
+ Open a terminal in this directory:  Menu of Windows/Visual Studio/x86 Native Tools Command Prompt
+write: move Makefile_win32 Makefile
+To compile, write: 	nmake all 
+Informations about this project are in the file: editor/PluginEditor.cc
+
+
+Instructions how to install c++ and root on your computer:
+ https://www-fourier.ujf-grenoble.fr/~faure/enseignement/c++/cours_c++/cours_1/cours_1.xhtml 

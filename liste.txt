@@ -1,5 +1,5 @@
 
-0 : ./Source/editor/PluginEditor.cc
+0 : Source/editor/PluginEditor.cc
  1 : /home/faure/c++/musique/JUCE_fred/Template/Source/processor/PluginProcessor.h
  2 : /home/faure/c++/musique/JUCE_fred/Template/Source/processor/PluginProcessor.cc
  3 : /home/faure/c++/musique/JUCE_fred/Template/Source/editor/PluginEditor.h

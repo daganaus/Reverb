@@ -1,0 +1,65 @@
+# This Makefile file is for Windows 10 and  has been created automatically by  makef.cc. 
+# Open a terminal in this directory:  Menu of Windows/Visual Studio/x86 Native Tools Command Prompt
+# Change its name, write: move Makefile_win32 Makefile
+# To compile, write: 	nmake all 
+# To execute, write:	editor/PluginEditor.exe
+
+# To make clean: 	nmake clean 
+
+# ----- directories (librairies, sources, and main) ----------------------
+
+SRC = .\Utils
+SRC2 = .
+CLIBS = C:\root_v6.24.00\lib
+CLIBS2 =  C:\Users\fredof\Downloads\vcpkg\vcpkg\installed\x86-windows\lib
+LIBR = $(CLIBS)\libCore.lib $(CLIBS)\libImt.lib $(CLIBS)\libRIO.lib $(CLIBS)\libNet.lib $(CLIBS)\libHist.lib $(CLIBS)\libGraf.lib $(CLIBS)\libGraf3d.lib $(CLIBS)\libGpad.lib $(CLIBS)\libROOTVecOps.lib $(CLIBS)\libTree.lib $(CLIBS)\libTreePlayer.lib $(CLIBS)\libRint.lib $(CLIBS)\libPostscript.lib $(CLIBS)\libMatrix.lib $(CLIBS)\libPhysics.lib $(CLIBS)\libMathCore.lib $(CLIBS)\libThread.lib $(CLIBS)\libROOTDataFrame.lib $(CLIBS)\libGui.lib $(CLIBS2)\gsl.lib $(CLIBS2)\fftw3.lib $(CLIBS2)\lapack.lib $(CLIBS2)\armadillo.lib $(CLIBS2)\openblas.lib  winmm.lib
+OSFLAG =  -D__WINDOWS_MM__
+
+#-- instructions, utilities ---------------
+
+CC = cl.exe /std:c++14 /EHsc /MD  $(OSFLAG) # compileur C++
+C  = cl.exe  /EHsc /MD  $(OSFLAG) # compileur C
+CFLAGS =  /IC:\root_v6.24.00\include /I$(SRC)  /I$(SRC2)  /IC:\Users\fredof\Downloads\vcpkg\vcpkg\installed\x86-windows\include    # include directoires
+
+LINK = link.exe  # linker
+O = obj
+EXE = .exe
+SYMB = -c %s /Fo$@   #  rem: $@ is the file name of the target , $** is all the prerequisite,  %s  is the name of the first prerequisite
+SYMB2 =  $@
+#============  targets =======================================
+
+$(SRC)\Source\editor\manager.$(O) : $(SRC)\Source\editor\manager.cc $(SRC)\Source\editor\manager.h $(SRC)\Source\com.h $(SRC)\Source\processor\PluginProcessor.h $(SRC)\Source\editor\PluginEditor.h 
+	$(CC) $(CFLAGS) $(SYMB)
+
+$(SRC)\Source\editor\manager.h : $(SRC)\Source\JuceHeader.h $(SRC)\Source\processor\PluginProcessor.h 
+	copy /b $(SYMB2) +,, #    
+
+$(SRC)\Source\com.$(O) : $(SRC)\Source\com.cc $(SRC)\Source\JuceHeader.h $(SRC)\Source\processor\PluginProcessor.h $(SRC)\Source\editor\PluginEditor.h $(SRC)\Source\com.h $(SRC)\Source\editor\manager.h 
+	$(CC) $(CFLAGS) $(SYMB)
+
+$(SRC)\Source\com.h : $(SRC)\Source\JuceHeader.h 
+	copy /b $(SYMB2) +,, #    
+
+$(SRC)\Source\editor\PluginEditor.$(O) : $(SRC)\Source\editor\PluginEditor.cc $(SRC)\Source\processor\PluginProcessor.h $(SRC)\Source\editor\PluginEditor.h $(SRC)\Source\com.h 
+	$(CC) $(CFLAGS) $(SYMB)
+
+$(SRC)\Source\editor\PluginEditor.h : $(SRC)\Source\JuceHeader.h $(SRC)\Source\processor\PluginProcessor.h 
+	copy /b $(SYMB2) +,, #    
+
+$(SRC)\Source\processor\PluginProcessor.$(O) : $(SRC)\Source\processor\PluginProcessor.cc $(SRC)\Source\processor\PluginProcessor.h $(SRC)\Source\editor\PluginEditor.h $(SRC)\Source\editor\manager.h 
+	$(CC) $(CFLAGS) $(SYMB)
+
+$(SRC)\Source\processor\PluginProcessor.h : $(SRC)\Source\JuceHeader.h $(SRC)\Source\com.h 
+	copy /b $(SYMB2) +,, #    
+
+$(SRC2)\editor\PluginEditor.$(O) : $(SRC2)\editor\PluginEditor.cc $(SRC)\Source\processor\PluginProcessor.h $(SRC)\Source\editor\PluginEditor.h $(SRC)\Source\com.h 
+	$(CC) $(CFLAGS) $(SYMB)
+
+OBJETS= $(SRC2)\editor\PluginEditor.$(O) $(SRC)\Source\processor\PluginProcessor.$(O) $(SRC)\Source\editor\PluginEditor.$(O) $(SRC)\Source\com.$(O) $(SRC)\Source\editor\manager.$(O) 
+
+#-- build the final binary file ------------- 
+
+all:  $(OBJETS) $(SRC2)\editor/PluginEditor.$(O)  
+	$(LINK)  $(OBJETS) $(LIBR) 
+clean:   
+	-del /q $(SRC2)\editor/PluginEditor$(EXE)  $(OBJETS)

@@ -1,0 +1,112 @@
+# This Makefile file is for Linux, Unix, MacOs systems and  has been created automatically by  makef.cc. 
+# To compile, write in a terminal: 	make all 
+# To execute, write in a terminal:	./editor/PluginEditor
+
+
+# ----- directories (librairies, sources, and main) ----------------------
+
+SRC = ./Utils
+SRC2 = .
+# ---- detects operating system on unix like machine
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Linux)
+    OSFLAG +=  -D__LINUX_ALSA__ -lasound
+endif
+
+ifeq ($(UNAME_S),Darwin)
+   OSFLAG += -D__MACOSX_CORE__   -framework CoreMIDI -framework CoreAudio -framework CoreFoundation
+endif
+
+os:
+	@echo $(OSFLAG)
+#--------------------
+LIBR=
+ 
+
+#-- instructions, utilities ---------------
+
+CC =    # compileur C++
+C  = gcc  -O3  -Wno-unused-result -Wno-format-truncation  -D_GNU_SOURCE -DRESAMP_CUBIC   # compilateur C
+FF  = gfortran     # compilateur Fortran
+CFLAGS =  -I$(SRC)  -I$(SRC2)     # Include directories
+
+LINK = $(CC)  # linker
+SYMB =  -c  $< -o $@  # rem: $< is the name of the first prerequisite, $@ is the file name of the target 
+SYMB2 = $@
+#============  targets =======================================
+
+$(SRC)/Source/editor/manager.$(O) : $(SRC)/Source/editor/manager.cc $(SRC)/Source/editor/manager.h $(SRC)/Source/com.h $(SRC)/Source/processor/PluginProcessor.h $(SRC)/Source/editor/PluginEditor.h 
+	$(CC) $(CFLAGS) $(SYMB)
+
+$(SRC)/Source/editor/manager.h : $(SRC)/Source/JuceHeader.h $(SRC)/Source/processor/PluginProcessor.h 
+	touch $(SYMB2)   
+
+$(SRC)/Source/com.$(O) : $(SRC)/Source/com.cc $(SRC)/Source/JuceHeader.h $(SRC)/Source/processor/PluginProcessor.h $(SRC)/Source/editor/PluginEditor.h $(SRC)/Source/com.h $(SRC)/Source/editor/manager.h 
+	$(CC) $(CFLAGS) $(SYMB)
+
+$(SRC)/Source/com.h : $(SRC)/Source/JuceHeader.h 
+	touch $(SYMB2)   
+
+$(SRC)/Source/editor/PluginEditor.$(O) : $(SRC)/Source/editor/PluginEditor.cc $(SRC)/Source/processor/PluginProcessor.h $(SRC)/Source/editor/PluginEditor.h $(SRC)/Source/com.h 
+	$(CC) $(CFLAGS) $(SYMB)
+
+$(SRC)/Source/editor/PluginEditor.h : $(SRC)/Source/JuceHeader.h $(SRC)/Source/processor/PluginProcessor.h 
+	touch $(SYMB2)   
+
+$(SRC)/Source/processor/PluginProcessor.$(O) : $(SRC)/Source/processor/PluginProcessor.cc $(SRC)/Source/processor/PluginProcessor.h $(SRC)/Source/editor/PluginEditor.h $(SRC)/Source/editor/manager.h 
+	$(CC) $(CFLAGS) $(SYMB)
+
+$(SRC)/Source/processor/PluginProcessor.h : $(SRC)/Source/JuceHeader.h $(SRC)/Source/com.h 
+	touch $(SYMB2)   
+
+$(SRC2)/editor/PluginEditor.$(O) : $(SRC2)/editor/PluginEditor.cc $(SRC)/Source/processor/PluginProcessor.h $(SRC)/Source/editor/PluginEditor.h $(SRC)/Source/com.h 
+	$(CC) $(CFLAGS) $(SYMB)
+
+OBJETS= $(SRC2)/editor/PluginEditor.$(O) $(SRC)/Source/processor/PluginProcessor.$(O) $(SRC)/Source/editor/PluginEditor.$(O) $(SRC)/Source/com.$(O) $(SRC)/Source/editor/manager.$(O) 
+
+#-- build the final binary file ------------- 
+
+all:  $(OBJETS) $(SRC2)/editor/PluginEditor.$(O)  
+	$(CC) $(CFLAGS)  -o $(SRC2)/editor/PluginEditor$(EXE)  $(OBJETS)     $(LIBR) 
+
+clean:   
+	\rm -f $(SRC2)/editor/PluginEditor$(EXE)  $(OBJETS)
+
+#--- build a library ------------------ 
+
+lib: $(OBJETS)
+	ar r $(SRC2)/editor/PluginEditor  $(OBJETS) 
+
+
+#--- Creates a .zip that contains all the source files of the project 
+
+zip:
+	cd $(SRC) && cd .. && \
+	rm -rf tmp && \
+	mkdir tmp && \
+	zip tmp/project_c++_editor/PluginEditor.zip Utils/Source/processor/PluginProcessor.h && \
+	zip tmp/project_c++_editor/PluginEditor.zip Utils/Source/processor/PluginProcessor.cc && \
+	zip tmp/project_c++_editor/PluginEditor.zip Utils/Source/editor/PluginEditor.h && \
+	zip tmp/project_c++_editor/PluginEditor.zip Utils/Source/editor/PluginEditor.cc && \
+	zip tmp/project_c++_editor/PluginEditor.zip Utils/Source/com.h && \
+	zip tmp/project_c++_editor/PluginEditor.zip Utils/Source/com.cc && \
+	zip tmp/project_c++_editor/PluginEditor.zip Utils/Source/JuceHeader.h && \
+	zip tmp/project_c++_editor/PluginEditor.zip Utils/Source/editor/manager.h && \
+	zip tmp/project_c++_editor/PluginEditor.zip Utils/Source/editor/manager.cc
+	cd $(SRC2) && \
+	rm -rf project_c++_editor/PluginEditor.zip && \
+	mv $(SRC)/../tmp/project_c++_editor/PluginEditor.zip Source && \
+	zip project_c++_editor/PluginEditor.zip editor/PluginEditor.cc && \
+	zip project_c++_editor/PluginEditor.zip Makefile_tmp  Makefile_win32 && \
+	printf "@ Makefile_tmp\n@=Makefile\n" | zipnote -w project_c++_editor/PluginEditor.zip && \
+	zip project_c++_editor/PluginEditor.zip README_tmp  && \
+	printf "@ README_tmp\n@=README\n" | zipnote -w project_c++_editor/PluginEditor.zip && \
+	echo Creation of zip finished
+
+#--- Creates a .zip that contains only binary and document files of the project
+
+zip_bin: $(SRC2)/editor/PluginEditor$(EXE)
+	cd $(SRC2) && \
+	rm -rf project_c++_bin_editor/PluginEditor.zip && \
+	zip project_c++_bin_editor/PluginEditor.zip  editor/PluginEditor$(EXE) && \
+	echo Creation of zip_bin finished
