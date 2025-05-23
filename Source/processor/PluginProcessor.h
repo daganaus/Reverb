@@ -29,7 +29,7 @@ using namespace std::chrono;
 
 //==============================================================================
 /*
-This class concerns the plugin.
+ concerns the plugin.
 
 It has a special function: 
    processBlock() that runs in a separated thread (faster)

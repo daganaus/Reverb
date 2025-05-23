@@ -10,13 +10,14 @@ Il est destiné en particulier à des [TP](https://www-fourier.ujf-grenoble.fr/~
 - [Template JUCE multi-plateforme (Linux, macOS, Windows)](#template-juce-multi-plateforme-linux-macos-windows)
 - [Étapes d'utilisation](#étapes-dutilisation)
   - [1. A faire une seule fois avant le premier projet](#1-a-faire-une-seule-fois-avant-le-premier-projet)
-    - [1.1. Choisir un répertoire et télécharger JUCE](#11-choisir-un-répertoire-et-télécharger-juce)
-    - [1.2. Télécharger  ce Template](#12-télécharger--ce-template)
+    - [1.1. Choisir un répertoire et télécharger `JUCE`](#11-choisir-un-répertoire-et-télécharger-juce)
+    - [1.2. Télécharger  ce projet `Template`](#12-télécharger--ce-projet-template)
   - [2. Créer un nouveau projet](#2-créer-un-nouveau-projet)
   - [3. Compiler le projet](#3-compiler-le-projet)
   - [4. Lancer l'exécutable standalone](#4-lancer-lexécutable-standalone)
-- [5. (Optionnel) Ecriture automatique  du code GUI (des widgets) pour JUCE: com.h, com.cc](#5-optionnel-ecriture-automatique--du-code-gui-des-widgets-pour-juce-comh-comcc)
-  - [5.1 Exemple d'utilisation  avec le projet Template](#51-exemple-dutilisation--avec-le-projet-template)
+- [5. (Optionnel) Ecriture automatique  du code c++  GUI (widgets) pour JUCE (fichiers com.h et com.cc)](#5-optionnel-ecriture-automatique--du-code-c--gui-widgets-pour-juce-fichiers-comh-et-comcc)
+  - [5.1 (la première fois) Installer le logiciel `makef`](#51-la-première-fois-installer-le-logiciel-makef)
+  - [5.2 Exemple d'utilisation  avec le projet Template](#52-exemple-dutilisation--avec-le-projet-template)
 - [6. (Optionnel) Nettoyer le projet](#6-optionnel-nettoyer-le-projet)
 - [7. Déposer le projet  sur GitLab](#7-déposer-le-projet--sur-gitlab)
   - [🔗 Dépendances nécessaires](#-dépendances-nécessaires)
@@ -40,7 +41,7 @@ Il est destiné en particulier à des [TP](https://www-fourier.ujf-grenoble.fr/~
 
 
 
-###  1.1. Choisir un répertoire et télécharger JUCE
+###  1.1. Choisir un répertoire et télécharger `JUCE`
 
 
 Avant de commencer, on choisit un répertoire existant,  par exemple le répertoire `TP` où seront stockés tous nos projets utilisant JUCE.
@@ -60,7 +61,7 @@ Avant de commencer, on choisit un répertoire existant,  par exemple le réperto
 
 
 
-###  1.2. Télécharger  ce Template
+###  1.2. Télécharger  ce projet `Template`
 
 
 Dans un terminal, dans ce répertoire (ex: `TP`) écrire:
@@ -158,31 +159,49 @@ Dans le répertoire du projet écrire:
 
 ---
 
-# 5. (Optionnel) Ecriture automatique  du code GUI (des widgets) pour JUCE: com.h, com.cc
+# 5. (Optionnel) Ecriture automatique  du code c++  GUI (widgets) pour JUCE (fichiers com.h et com.cc)
 
 On peut utiliser un script appelé `makef`pour écrire automatique le code c++ concernant les widgets de l'interface GUI de JUCE. 
+
+
+## 5.1 (la première fois) Installer le logiciel `makef`
+
 
 Voici le logiciel `makef`à installer et configurer:
 
 https://gricad-gitlab.univ-grenoble-alpes.fr/faurefre/makef
 
 
-## 5.1 Exemple d'utilisation  avec le projet Template
+## 5.2 Exemple d'utilisation  avec le projet Template
 
 
-On supposer que vous avez installé le logiciel `makef` et que vous avez créé un projet `Projet` (ou autre nom) à partir de `Template`.
+On suppose que vous avez installé le logiciel `makef` et que vous avez créé un projet `Projet` (ou avec un autre nom) à partir de `Template` comme expliqué ci-dessus. Voici un exemple pour ajouter un widget.
 
 - Ouvrir le fichier Source/editor/manager.h et dans la classe Manager, vers la ligne 50 ajoutez  la ligne suivante:
 
       int essai = 3; //  make_gui =  N(ZT("mon onglet"),"essai") help ="un essai de widget"
+ 
 
-- Modifier les répertoires dans le fichcier `makef.config`
+- Modifier le fichier `makef.config` pour préciser les répertoires. Par exemple (si windows)
+
+
+      repertoire contenant les autres fichiers .cc  et les autres fichiers .h  
+          = C:\Users\faure\TP\Projet
+
+      repertoire temporaire ou il y a  liste.txt
+            = C:\Users\faure\TP\Projet
 
 - Dans un terminal, se placer dans le répertoire du projet, et écrire:
 
 
-      makef Source editor/PluginEditor.cc  makef.config  main   JUCE
+    - sous linux ou Mac:
 
+          makef Source editor/PluginEditor.cc  makef.config  main   JUCE
+
+
+    - sous windows
+
+          ..\makef\build\Debug\makef.exe  Source editor/PluginEditor.cc  makef.config  main   JUCE
 
 
   résultat: cela écrit les fichiers com.h, com.cc dans le répertoire $REP/Source, prêts à la compilation.      
@@ -192,6 +211,8 @@ On supposer que vous avez installé le logiciel `makef` et que vous avez créé 
   résultat: Il apparaitra un onglet appelé "mon onglet" qui contient un widget avec la valeur numérique de la variable essai que l'on peut modifier. Il y a aussi le message d'aide si la souris passe dessus.
 
 <!-- OK  sous Linux -->
+
+<!-- Pb execution de makef sous Windows -->
 
 ---
 
@@ -261,9 +282,9 @@ Par exemple, pour  ne compiler que le standalone sans packaging:
 
 # 9. A faire (TO DO)
 
- - Incorporer le script make_f et ajouter la doc
+ - Incorporer le script make_f et ajouter la doc, et tester aussi sur Mac et windows.
  - Mettre les jauges de latence dans un onglet "moniteur"
- - Rendre compatible avec ROOT du cern et Armadillo?
+ - Rendre compatible avec ROOT du cern et Armadillo en option, si installés?
  
 
 ---

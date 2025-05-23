@@ -8,7 +8,7 @@ using namespace juce;
 
 //==============================================================================
 /*
-This class concerns the GUI (widgets)
+concerns the GUI (widgets)
  */
 class Editor  : public juce::AudioProcessorEditor
 {

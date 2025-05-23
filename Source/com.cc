@@ -25,7 +25,7 @@ int prochaine(istream & fich)
 		return 1;
 }
 
-//-- Below is the list of 3 windows for each tab window + ZC, named: Page_ZT_j, with j=0->1
+//-- Below is the list of 4 windows for each tab window + ZC, named: Page_ZT_j, with j=0->2
 
 
 //====Constructor =========================================
@@ -69,6 +69,7 @@ Page_ZT_0::Page_ZT_0(Com *p_i)
    tab = 	new juce::TabbedComponent(juce::TabbedButtonBar::TabsAtTop);
    auto colour = findColour (ResizableWindow::backgroundColourId);
    tab->addTab("Monitor", colour, new Page_ZT_1(p_com), true);
+   tab->addTab("mon onglet", colour, new Page_ZT_2(p_com), true);
    tab->setLookAndFeel(&customLookAndFeel);
    addAndMakeVisible (tab);
 
@@ -185,6 +186,61 @@ void Page_ZT_1::resized()
 void Page_ZT_1::paint(juce::Graphics& g)
 {
 }
+
+//====Constructor =========================================
+Page_ZT_2::Page_ZT_2(Com *p_i)
+{
+   p_com = p_i;
+   p_com->p_Tab_mon_onglet = this;
+   if(p_com->verbose >= 1 )
+     cout<<"Page_ZT_2()"<<endl;
+
+
+   //-- from the instruction of class: Manager: 
+   // int essai3 = 3; //  make_gui =  N(ZT("mon onglet"),"essai3") help ="un essai3 de widget"
+
+   p_com->Manager_essai3_text = new juce::Label();
+   p_com->Manager_essai3_text->setText("", juce::dontSendNotification);
+   addAndMakeVisible (p_com->Manager_essai3_text);
+
+	p_com->Manager_essai3 = new juce::TextEditor("p_com->Manager_essai3");
+   p_com->Manager_essai3->setText("3");
+   p_com->Manager_essai3->onTextChange = [this] { p_com->Process_message_Manager_essai3(); }; // callback
+   p_com->Manager_essai3->setTooltip("un essai3 de widget");
+   addAndMakeVisible (p_com->Manager_essai3);
+
+   p_com->Manager_essai3_texte = new juce::Label();
+   p_com->Manager_essai3_texte->setText("essai3", juce::dontSendNotification);
+   addAndMakeVisible (p_com->Manager_essai3_texte);
+   if(p_com->verbose >= 1 )
+     cout<<"end of Page_ZT_2()"<<endl;
+
+}
+
+//====  Destructor =========================================
+Page_ZT_2::~Page_ZT_2()
+{
+
+   delete p_com->Manager_essai3_text;
+   delete p_com->Manager_essai3;
+   delete p_com->Manager_essai3_texte;
+}
+
+//=============================================
+// resized() that is called once at the initialisation of the window and every time the window is resized by the user (if resizing is enabled). This is a good place to set the size and position of widgets so they can be positioned relative to the window bounds.
+void Page_ZT_2::resized()
+{
+
+   p_com->Manager_essai3_text->setBounds(12, 10, 0, 20 ); //  (x, y, width, height)
+   p_com->Manager_essai3->setBounds(12, 10, 50, 20 ); //  (x, y, width, height)
+   p_com->Manager_essai3_texte->setBounds(62, 10, 60, 20 ); //  (x, y, width, height)
+}
+
+//=============================================
+// paint() function is where all custom shapes and GUI elements are drawn to the window.
+void Page_ZT_2::paint(juce::Graphics& g)
+{
+}
 //======================
 Com::Com(Editor *p_i, Manager *pManager)
 {
@@ -203,6 +259,7 @@ Com::Com(Editor *p_i, Manager *pManager)
    //.....  c++ variables -> widget
    Met_a_jour_Manager_s_MM();
    Met_a_jour_Manager_opt_sound();
+   Met_a_jour_Manager_essai3();
    Met_a_jour_Manager_latency();
    Met_a_jour_Manager_latency_mean();
 }
@@ -244,6 +301,15 @@ void Com::Met_a_jour_Manager_opt_sound()
        	Manager_opt_sound->setToggleState(true, juce::dontSendNotification);
     else
        	Manager_opt_sound->setToggleState(false, juce::dontSendNotification);
+}
+//===================
+// function to transfert c++ variable -> widget variable
+// will call Process_Manager_essai3()
+void Com::Met_a_jour_Manager_essai3()
+{
+	if( Manager_essai3 == nullptr)
+		return;
+	Manager_essai3->setText(to_string(p_Manager->essai3));
 }
 //===================
 // function to transfert c++ variable -> widget variable
@@ -289,6 +355,12 @@ void Com::Process_message_Manager_opt_sound()
             	p_Manager->opt_sound = 1;
          else
             	p_Manager->opt_sound = 0;
+}
+//===================
+// function to transfert widget variable -> c++ variable -> parameter
+void Com::Process_message_Manager_essai3()
+{
+    p_Manager->essai3 = 	Manager_essai3->getText().getIntValue();
 }
 //===================
 // function to transfert widget variable -> c++ variable -> parameter
@@ -549,6 +621,7 @@ void Parameters::Save_parameters(string name_params, Processor * processor, Memo
     // in case of compilation error, check if you need to add a function operator << or >> above
 	//... parameters of user's objects
 	xml->setAttribute("Manager_opt_sound",   p_Manager->opt_sound);
+	xml->setAttribute("Manager_essai3",   p_Manager->essai3);
 	xml->setAttribute("Manager_latency",   p_Manager->latency);
 	xml->setAttribute("Manager_latency_mean",   p_Manager->latency_mean);
 	processor->copyXmlToBinary(*xml, destData);
@@ -584,6 +657,10 @@ void Parameters::Load_parameters(string name_params, Processor * processor, cons
 		     if(processor->p_com != nullptr)
 		   	    processor->p_com->Met_a_jour_Manager_opt_sound(); // -> widget variable
         //cout<<"      load     value   p_Manager->opt_sound   = "<<   p_Manager->opt_sound <<endl;
+	     p_Manager->essai3  = xmlState->getIntAttribute ("Manager_essai3", 3); // name, default value if not found
+		     if(processor->p_com != nullptr)
+		   	    processor->p_com->Met_a_jour_Manager_essai3(); // -> widget variable
+        //cout<<"      load     value   p_Manager->essai3   = "<<   p_Manager->essai3 <<endl;
 	   p_Manager->latency  =  xmlState->getDoubleAttribute ("Manager_latency", 0); // name, default value if not found
 	   if(processor->p_com != nullptr)
 		   processor->p_com->Met_a_jour_Manager_latency(); // -> widget variable
