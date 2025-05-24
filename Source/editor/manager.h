@@ -49,7 +49,6 @@ public:
 	//---
 	int opt_sound = 0; //  make_gui =  C(ZC) texxt ="sound:"    help ="1: create a sound, 0: silence"
 	
-	int essai3 = 3; //  make_gui =  N(ZT("mon onglet"),"essai3") help ="un essai3 de widget"
 
 //-- constructeur ------------------------
 	Manager();
