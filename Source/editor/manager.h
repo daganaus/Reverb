@@ -42,7 +42,7 @@ public:
 
 	
 	//-- GUI editor to display the messages: 
-	string s_MM; // make_gui =  nl Editor(ZC, "Midi messages")
+	string s_MM; // make_gui =  nl Editor(ZT("Monitor"), "Midi messages")
 	mutex mtx_s_MM; // because s_MM is shared between process and GUI
 	atomic<bool> changes_MM = false; // 1: ask to refresh display
 

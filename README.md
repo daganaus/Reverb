@@ -282,10 +282,9 @@ Par exemple, pour  ne compiler que le standalone sans packaging:
 
 # 9. A faire (TO DO)
 
- - Enlever les warnings sous windows
- - Incorporer le script make_f et ajouter la doc, et tester aussi sur Mac et windows.
  - Mettre les jauges de latence dans un onglet "moniteur"
  - Rendre compatible avec ROOT du cern et Armadillo en option, si installés?
+ - - Enlever les warnings sous windows
  
 
 ---
