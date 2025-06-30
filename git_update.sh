@@ -1,9 +1,7 @@
 #!/bin/bash
 
 # Répertoires
-JUCE_PROJ="$HOME/c++/musique/JUCE_fred"
-PROJECT="Template"
-PROJ_DIR="$JUCE_PROJ/$PROJECT"
+PROJ_DIR="$HOME/Stage_ffaure/Reverb"
 
 # Aller dans le projet
 cd "$PROJ_DIR" || { echo "❌ Dossier introuvable : $PROJ_DIR" >&2; exit 1; }
@@ -21,12 +19,15 @@ if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
     exit 1
 fi
 
+# Demande de message de commit
+read -p "Entrez le message de commit : " MESSAGE
+
 # Ajouter les changements
 echo "🔍 Préparation des changements pour commit..."
 git add -A
 
 # Commit avec message automatique ou personnalisé
-MESSAGE="${1:-mise à jour}"
+MESSAGE="${MESSAGE:-mise à jour}"
 git commit -m "$MESSAGE"
 
 # Pousser sur le dépôt distant
