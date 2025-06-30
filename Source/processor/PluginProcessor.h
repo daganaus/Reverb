@@ -16,8 +16,9 @@
 
 #include "Source/JuceHeader.h"
 #include "Source/com.h"
-
-#include <iostream> // to use in out messages
+#include <juce_dsp/juce_dsp.h>
+#include "Source/processor/Edge.h" // for Edge class, circular buffer for audio samples
+#include <iostream> // to use in & out messages
 using namespace std;
 
 
@@ -37,6 +38,10 @@ It has a special function:
 It creates the object Editor() for GUI.
 
 */
+
+
+
+
 class Processor  : public juce::AudioProcessor
                             #if JucePlugin_Enable_ARA
                              , public juce::AudioProcessorARAExtension
@@ -76,6 +81,7 @@ public:
     void parameterValueChanged (int parameterIndex, float newValue) override;
 	void parameterGestureChanged(int parameterIndex, bool gestureIsStarting) override;
 
+    
 	
     //==============================================================================
     Processor();
@@ -90,7 +96,8 @@ public:
    #endif
 	//==============================================================================
     void processBlock (juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
-
+    void processBlock(juce::AudioBuffer<double>&, juce::MidiBuffer&) override;
+    
 	void Transfer_L_midi_messages_to_midiMessages(	vector<vector< uint8_t>> & L_midi_messages, MidiBuffer&  midiMessages);
 	void  Print_Midi_Messages( MidiBuffer&  midi_buf, string text);
 	void  Print_Midi_Messages(vector<vector< uint8_t>> & L_midi_messages, string text);
@@ -115,6 +122,7 @@ public:
     const juce::String getProgramName (int index) override;
     void changeProgramName (int index, const juce::String& newName) override;
 
+    juce::AudioParameterFloat* getDryWetParam() { return dryWetParam; }
     //==============================================================================
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
@@ -124,10 +132,16 @@ public:
 	void Add_STM_message_note_on(vector<vector< uint8_t>> &L_midi_messages, int ch_out, int key_out, int vel_out, vector<int> &L_n, double dx);
 	void Add_STM_message_note_on(vector<vector< uint8_t>> &L_midi_messages, int vel_out, vector<int> &L_n, double dx_add = 0);
 	//===============
-	int verbose = 0;
+	int verbose = 1;
 
-	
+	float Graph(float dry, float gain);
+
+    
 private:
+    //juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Linear> delayLine;
+    Edge* edge = nullptr; // pointer to the Edge object, set in the constructor
+    juce::AudioParameterFloat* dryWetParam = nullptr; // pointer to the dry/wet parameter, set in the constructor
+    
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Processor)
 };

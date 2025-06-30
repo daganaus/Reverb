@@ -1,41 +1,20 @@
-# --- Fichiers de compilation CMake ---
 build/
 cmake-build-*/
-CMakeCache.txt
 CMakeFiles/
 Makefile
+CMakeCache.txt
 install_manifest.txt
-
-# --- Fichiers générés par JUCE / Projucer ---
 Builds/
 JuceLibraryCode/
-
-# --- Fichiers temporaires ---
-*~
-*.swp
-*.swo
-*.bak
-
-# --- Fichiers d'exécution ---
 *.o
-*.obj
 *.so
-*.dll
 *.dylib
 *.exe
 *.app
 *.a
-
-# --- Archives ---
-*.zip
+.vscode/
+.idea/
+.DS_Store
 *.tar.gz
 *.deb
 *.pkg
-
-# --- IDEs ---
-.vscode/
-.idea/
-
-# --- macOS / Windows spécifiques ---
-.DS_Store
-Thumbs.db

@@ -17,7 +17,7 @@ BUILD_DIR="build"
 
 # Options par défaut
 BUILD_TYPE="Debug"
-FULL_REBUILD=true
+FULL_REBUILD=false
 
 # Lecture des options
 for arg in "$@"; do
@@ -25,8 +25,8 @@ for arg in "$@"; do
     --release)
       BUILD_TYPE="Release"
       shift;;
-    --fast)
-      FULL_REBUILD=false
+    --init)
+      FULL_REBUILD=true
       shift;;
   esac
 done

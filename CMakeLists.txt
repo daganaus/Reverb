@@ -60,11 +60,11 @@ juce_add_plugin(${TARGET_NAME}
     COMPANY_NAME "${COMPANY_NAME}"
     PLUGIN_NAME "${TARGET_NAME}"
     PRODUCT_NAME "${COMPANY_NAME}_${TARGET_NAME}"
-    IS_SYNTH TRUE
-    NEEDS_MIDI_INPUT TRUE
+    IS_SYNTH FALSE
+    NEEDS_MIDI_INPUT FALSE
     PLUGIN_MANUFACTURER_CODE Frdf
     PLUGIN_CODE Tmpl
-    COPY_PLUGIN_AFTER_BUILD TRUE
+    COPY_PLUGIN_AFTER_BUILD FALSE
     FORMATS ${PLUGIN_FORMATS}
 )
 
@@ -72,6 +72,7 @@ juce_add_plugin(${TARGET_NAME}
 target_sources(${TARGET_NAME}
   PRIVATE
     Source/processor/PluginProcessor.cc
+    Source/processor/Edge.cc
     Source/editor/PluginEditor.cc
     Source/editor/manager.cc
     Source/com.cc
@@ -97,6 +98,8 @@ target_link_libraries(${TARGET_NAME}
     juce::juce_recommended_config_flags
     juce::juce_recommended_lto_flags
     juce::juce_recommended_warning_flags
+    juce::juce_dsp
+
 )
 
 # ------------ Installation et packaging conditionnel ------------

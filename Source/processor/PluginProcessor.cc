@@ -9,6 +9,7 @@
 #include "Source/processor/PluginProcessor.h"
 #include "Source/editor/PluginEditor.h"
 #include "Source/editor/manager.h"
+#include <juce_dsp/juce_dsp.h>
 using namespace juce;
 
 
@@ -34,7 +35,8 @@ Processor::Processor()
 #endif
 
 {
-
+	dryWetParam = new juce::AudioParameterFloat("dryWet", "Dry/Wet", 0.0f, 1.0f, 0.005f);
+	addParameter(dryWetParam);
 	manager = new Manager();
 	manager->process = this;
 
@@ -51,7 +53,9 @@ Processor::Processor()
 //==============================================================================
 Processor::~Processor()
 {
-
+	//---- delete the manager, which contains the GUI
+    delete manager;
+    manager = nullptr;
    //.... for the thread GUI ...
 	delete params;
 	params = nullptr;
@@ -61,7 +65,7 @@ Processor::~Processor()
 //==============================================================================
 const juce::String Processor::getName() const
 {
-    return JucePlugin_Name;
+    return "Reverb";
 }
 
 //==============================================================================
@@ -111,16 +115,21 @@ int Processor::getCurrentProgram()
 //==============================================================================
 void Processor::setCurrentProgram (int index)
 {
-
+	(void) index; // avoid unused parameter warning
+	// NB: some hosts don't cope very well if you tell them there are 0 programs,
+	// so this should be at least 1, even if you're not really implementing programs.
 }
 //==============================================================================
 const juce::String Processor::getProgramName (int index)
 {
-    return {};
+    (void) index;
+	return {};
 }
 //==============================================================================
 void Processor::changeProgramName (int index, const juce::String& newName)
 {
+	(void) index;
+	(void) newName;
 }
 
 //==============================================================================
@@ -128,7 +137,27 @@ void Processor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
-	//t0 = high_resolution_clock::now(); // mesure du "time point 0"
+	//(void)samplesPerBlock; // avoid unused parameter warning
+	//(void)sampleRate; // avoid unused parameter warning
+	t0 = high_resolution_clock::now(); // mesure du "time point 0"
+    //Création de l'arrete avec une taille de buffer circulaire de 1024 samples
+	if (edge != nullptr)
+    	delete edge;
+	edge = new Edge(44100);
+	std::cout << "Processor::prepareToPlay: sampleRate=" << sampleRate << " samplesPerBlock=" << samplesPerBlock << std::endl;
+	std::cout << "delay time = " << edge->getLength()/sampleRate << std::endl;
+
+
+	/*
+	juce::dsp::ProcessSpec spec;
+    spec.sampleRate = sampleRate;
+    spec.maximumBlockSize = static_cast<juce::uint32>(samplesPerBlock);
+	spec.numChannels = static_cast<juce::uint32>(getTotalNumOutputChannels());
+    delayLine.prepare(spec);
+    delayLine.setMaximumDelayInSamples((int) (sampleRate * 2.0)); // 2 secondes max
+    delayLine.setDelay(sampleRate * 1.0); // 1 seconde de délai par défaut
+    delayLine.reset();
+	*/
 }
 //==============================================================================
 void Processor::releaseResources()
@@ -141,8 +170,8 @@ void Processor::releaseResources()
 #ifndef JucePlugin_PreferredChannelConfigurations
 bool Processor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
-    return true;
-	
+    (void)layouts;
+    return true;	
 }
 #endif
 
@@ -171,13 +200,13 @@ void   Processor::Print_Midi_Messages(MidiBuffer&  midi_buf)
 
 		const uint8* p_mes =  mes.getRawData();
 		Mes.assign(p_mes, p_mes + mes.getRawDataSize());
-		for(int i=0; i<Mes.size(); i++)
+		for(size_t i=0; i<Mes.size(); i++)
 			//s<< hex << setw(2) << setfill('0')<<Mes[i]<<",";
 			s<< hex <<(int)Mes[i]<<",";
 		//double t = mes.getTimeStamp();
-		double t = Date_from_start_in_sec();
+		double t_start = Date_from_start_in_sec();
 
-		s<<"\tt="<< t; // time from start 
+		s<<"\tt="<< t_start; // time from start 
 		s<<endl;
 	
 	}
@@ -207,6 +236,20 @@ So beware of this +/-1 shift.
 Rem: this function is in the Processor Thread.
 
  */
+float Processor::Graph(float dry, float gain)
+{
+	if(manager == nullptr)
+		return dry;
+
+	float wet = edge->getSample(edge->getLength()); // récupère le dernière échantillon de l'arrete
+
+	// Envoie le dry signal dans l'arrete
+	edge->pushSample(dry); //après getsample car push fait avancer le buffer
+
+	// Applique un gain pour éviter la saturation
+	return gain*wet;
+}
+
 
 void Processor::processBlock(AudioBuffer<float>& audio_buffer, MidiBuffer& midi_buffer)
 {
@@ -215,10 +258,10 @@ void Processor::processBlock(AudioBuffer<float>& audio_buffer, MidiBuffer& midi_
 	//---- measures time and latency
 	double t_begin = Date_from_start_in_sec(); // time , begin of block process
 
-	//--- genere un son de sinus à 440 Hz.
+	//--- delay line
 	if(manager != nullptr && manager->opt_sound == 1)
 	{
-		
+		float dryWetValue = dryWetParam->get(); // get the dry/wet value from the manager
 		int N = getSampleRate(); // nombre echantillons / sec.
 		int n = audio_buffer.getNumSamples(); // nombre echantillons dans le buffer
 		int nchan = audio_buffer.getNumChannels(); // 1: mono, 2: stereo
@@ -229,17 +272,23 @@ void Processor::processBlock(AudioBuffer<float>& audio_buffer, MidiBuffer& midi_
 		{
 			// Récupérer le pointeur d'écriture pour le canal spécifié
 			float* bufferPtr = audio_buffer.getWritePointer(ch);
-
-			double f = 440; // 440Hz
 		
 			for (int i = 0; i< n; i++)
 			{
-//				double t = (i + Nb * n) /double (N); // time from the start
-						
-				bufferPtr[i] = 0.1* sin(2*M_PI*f * t); // il est  deconseille d'utiliser sin() ici.
-				t = t + 1./N; // increment time
+			    // échantillon d'entrée
+				float dry = bufferPtr[i]; 
+
+            	// Récupère la sortie retardée et la place dans le buffer
+				float wet = Graph(dry, 1.0f); // appel de la fonction Graph pour obtenir le signal traité
+
+				// Applique un gain pour éviter la saturation
+				//cout << "dryWetValue=" << dryWetValue << endl;
+				bufferPtr[i] = (1.0f - dryWetValue) * dry + dryWetValue * wet;
+			
+				// Incrémente le temps
+				t += 1.0 / N;
 			}
-	   
+			
 		}
 
 	}
@@ -278,6 +327,19 @@ void Processor::processBlock(AudioBuffer<float>& audio_buffer, MidiBuffer& midi_
 	}
 }
 
+void Processor::processBlock (juce::AudioBuffer<double>& audio_buffer, juce::MidiBuffer& midi_buffer) // Ce buffer est INTERNE, il ne SORT PAS du standalone !
+{
+    // Convertit le buffer double en float, puis appelle la version float
+    juce::AudioBuffer<float> tmp(audio_buffer.getNumChannels(), audio_buffer.getNumSamples());
+    for (int ch = 0; ch < audio_buffer.getNumChannels(); ++ch)
+        for (int s = 0; s < audio_buffer.getNumSamples(); ++s)
+            tmp.setSample(ch, s, static_cast<float>(audio_buffer.getSample(ch, s)));
+    processBlock(tmp, midi_buffer);
+}
+
+
+
+
 //==============================================================================
 bool Processor::hasEditor() const
 {
@@ -307,12 +369,16 @@ This function is called if a parameter is changed: from automation or by the plu
  */
 void  Processor::parameterValueChanged (int parameterIndex, float newValue) 
 {
+	(void)newValue;
 	params->Transmit_Automation_Parameters(this, parameterIndex); // in com.cc
+
 }
 
 //=======================
 void  Processor::parameterGestureChanged(int parameterIndex, bool gestureIsStarting)
 {
+	(void)parameterIndex;
+    (void)gestureIsStarting;
 }
 
 
@@ -325,8 +391,13 @@ double 	Processor::Date_from_start_in_sec() //date from t0 in sec.
 
 
 //==============================================================================
+
+
+//==============================================================================
 // This creates new instances of the plugin..
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new Processor();
 }
+
+//==============================================================================

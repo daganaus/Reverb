@@ -34,7 +34,7 @@ Page_ZT_0::Page_ZT_0(Com *p_i)
    p_com = p_i;
    p_com->p_Tab_ZC = this;
    if(p_com->verbose >= 1 )
-     cout<<"Page_ZT_0()"<<endl;
+      cout<<"Page_ZT_0()"<<endl;
 
 
    //-- from the instruction of class: Manager: 
@@ -49,19 +49,20 @@ Page_ZT_0::Page_ZT_0(Com *p_i)
    p_com->Manager_opt_sound->setToggleState(false, juce::dontSendNotification);
    p_com->Manager_opt_sound->setTooltip("1: create a sound, 0: silence");
    addAndMakeVisible (p_com->Manager_opt_sound);
-
+   
    p_com->Manager_opt_sound_texte = new juce::Label();
    p_com->Manager_opt_sound_texte->setText("", juce::dontSendNotification);
    addAndMakeVisible (p_com->Manager_opt_sound_texte);
 
    tab = 	new juce::TabbedComponent(juce::TabbedButtonBar::TabsAtTop);
    auto colour = findColour (ResizableWindow::backgroundColourId);
-   tab->addTab("Monitor", colour, new Page_ZT_1(p_com), true);
+   tab->addTab("Monitor", colour, new Page_ZT_1(p_com, &(p_com->p_e->processor)), true);
+   //tab->addTab("Monitor", colour, new Page_ZT_1(p_com), true);
    tab->setLookAndFeel(&customLookAndFeel);
    addAndMakeVisible (tab);
 
    if(p_com->verbose >= 1 )
-     cout<<"end of Page_ZT_0()"<<endl;
+      cout<<"end of Page_ZT_0()"<<endl;
 
 }
 
@@ -86,7 +87,7 @@ void Page_ZT_0::resized()
    p_com->Manager_opt_sound->setBounds(60, 10, 30, 20 ); //  (x, y, width, height)
    p_com->Manager_opt_sound_texte->setBounds(90, 10, 12, 20 ); //  (x, y, width, height)
 
-   tab->setBounds(0, 40, 512, 95);// x,y,w,h
+   tab->setBounds(0, 40, 668, 95);// x,y,w,h
 
 }
 
@@ -97,12 +98,13 @@ void Page_ZT_0::paint(juce::Graphics& g)
 }
 
 //====Constructor =========================================
-Page_ZT_1::Page_ZT_1(Com *p_i)
+Page_ZT_1::Page_ZT_1(Com *p_i, Processor *proc) 
+   : processor(proc)
 {
    p_com = p_i;
    p_com->p_Tab_Monitor = this;
    if(p_com->verbose >= 1 )
-     cout<<"Page_ZT_1()"<<endl;
+      cout<<"Page_ZT_1()"<<endl;
 
 
    //-- from the instruction of class: Manager: 
@@ -142,8 +144,33 @@ Page_ZT_1::Page_ZT_1(Com *p_i)
    p_com->Manager_latency_mean_texte = new juce::Label();
    p_com->Manager_latency_mean_texte->setText("", juce::dontSendNotification);
    addAndMakeVisible (p_com->Manager_latency_mean_texte);
+
+   //-- from the instruction of class: Manager: 
+   // float dryWetValue = 0.0f; // make_gui = HS(ZT("Monitor"), 0, 1, 0.01f, "dryWetValue") help ="mix l'audio traité avec l'audio brut"
+
+   managerDryWetValueText = std::make_unique<juce::Label>();
+   managerDryWetValueText->setText("", juce::dontSendNotification);
+   addAndMakeVisible (managerDryWetValueText.get());
+
+   managerDryWetValue = std::make_unique<juce::Slider>(juce::Slider::LinearHorizontal,  Slider::TextBoxRight);
+   managerDryWetValue->setValue(0.0f);
+   managerDryWetValue->setTextBoxStyle(Slider::TextBoxRight, true, 50, 20); // false: no editable
+   managerDryWetValue->setRange (0, 1, 0.01f);
+   //p_com->Manager_dryWetValue->onValueChange = [this] { p_com->Process_message_Manager_dryWetValue(); }; // callback
+   //p_com->Manager_dryWetValue->setTooltip("mix l'audio traité avec l'audio brut");
+   addAndMakeVisible (managerDryWetValue.get());
+
+   managerDryWetValueTexte = std::make_unique<juce::Label>();
+   managerDryWetValueTexte->setText("", juce::dontSendNotification);
+   addAndMakeVisible (managerDryWetValueTexte.get());
+   // Attach the slider to the parameter
+   if (processor->getDryWetParam() != nullptr && managerDryWetValue != nullptr)
+      dryWetAttachment = std::make_unique<juce::SliderParameterAttachment>(*processor->getDryWetParam(), *managerDryWetValue, nullptr);
+   else
+      std::cout << "ATTENTION: paramètre dryWet ou slider non initialisé !" << std::endl;
+
    if(p_com->verbose >= 1 )
-     cout<<"end of Page_ZT_1()"<<endl;
+      cout<<"end of Page_ZT_1()"<<endl;
 
 }
 
@@ -154,13 +181,14 @@ Page_ZT_1::~Page_ZT_1()
    delete p_com->Manager_s_MM_text;
    delete p_com->Manager_s_MM_button;
    if(p_com->Manager_s_MM != nullptr)
-     delete p_com->Manager_s_MM;
+      delete p_com->Manager_s_MM;
    delete p_com->Manager_latency_text;
    delete p_com->Manager_latency;
    delete p_com->Manager_latency_texte;
    delete p_com->Manager_latency_mean_text;
    delete p_com->Manager_latency_mean;
    delete p_com->Manager_latency_mean_texte;
+
 }
 
 //=============================================
@@ -178,6 +206,10 @@ void Page_ZT_1::resized()
    p_com->Manager_latency_mean_text->setBounds(264, 40, 104, 20 ); //  (x, y, width, height)
    p_com->Manager_latency_mean->setBounds(368, 40, 120, 20 ); //  (x, y, width, height)
    p_com->Manager_latency_mean_texte->setBounds(488, 40, 12, 20 ); //  (x, y, width, height)
+
+   managerDryWetValueText->setBounds(524, 40, 0, 20 ); //  (x, y, width, height)
+   managerDryWetValue->setBounds(524, 40, 120, 20 ); //  (x, y, width, height)
+   managerDryWetValueTexte->setBounds(644, 40, 12, 20 ); //  (x, y, width, height)
 }
 
 //=============================================
@@ -205,6 +237,7 @@ Com::Com(Editor *p_i, Manager *pManager)
    Met_a_jour_Manager_opt_sound();
    Met_a_jour_Manager_latency();
    Met_a_jour_Manager_latency_mean();
+   //Met_a_jour_Manager_dryWetValue();
 }
 //===========
 Com::~Com()
@@ -216,7 +249,7 @@ Com::~Com()
 void Com::resized()
 {
    p_Tab_ZC->setBounds(0, 0, p_e->getWidth(), p_e->getHeight());
-   p_e->setSize (512, 135); // resize the main window
+   p_e->setSize (668, 135); // resize the main window
 }
 //=============
 void Com::timerCallback(int ID)
@@ -276,6 +309,16 @@ void Com::Met_a_jour_Manager_latency_mean()
 	Manager_latency_mean_x = x;
 }
 //===================
+// function to transfert c++ variable -> widget variable
+// will call Process_Manager_dryWetValue()
+/*void Com::Met_a_jour_Manager_dryWetValue()
+{
+	if( Manager_dryWetValue == nullptr)
+		return;
+    if(p_Manager->dryWetValue != 	Manager_dryWetValue->getValue())
+	    Manager_dryWetValue->setValue(p_Manager->dryWetValue);
+}*/
+//===================
 // function to transfert widget variable -> c++ variable -> parameter
 void Com::Process_message_Manager_s_MM()
 {
@@ -309,6 +352,17 @@ void Com::Process_message_Manager_latency_mean()
 
 }
 //===================
+// function to transfert widget variable -> c++ variable -> parameter
+/*
+void Com::Process_message_Manager_dryWetValue()
+{
+   if(p_Manager->dryWetValue != 	Manager_dryWetValue->getValue())
+   {
+      p_Manager->dryWetValue = 	Manager_dryWetValue->getValue();
+   }
+}
+*/
+//===================
 // function to show/hide a window
 void Com::Show_Hide_Window_Manager_s_MM()
 {
@@ -335,7 +389,7 @@ void Com::Show_Hide_Window_Manager_s_MM()
 }
 //===================================
 // from line:string s_MM; // make_gui =  nl Editor(ZT("Monitor"), "Midi messages")
-TCanvas_Manager_s_MM::TCanvas_Manager_s_MM(Com *p_i, const juce::String &name, juce::Colour backgroundColour, int requiredButtons, bool addToDesktop) : juce::DocumentWindow(name, juce::Colours::lightgrey, DocumentWindow::allButtons)
+TCanvas_Manager_s_MM::TCanvas_Manager_s_MM(Com *p_i, const juce::String &name, juce::Colour backgroundColour, int requiredButtonsParam, bool addToDesktop) : juce::DocumentWindow(name, juce::Colours::lightgrey, DocumentWindow::allButtons)
 {
     p_com = p_i;
     setResizable(true, true);
@@ -551,6 +605,7 @@ void Parameters::Save_parameters(string name_params, Processor * processor, Memo
 	xml->setAttribute("Manager_opt_sound",   p_Manager->opt_sound);
 	xml->setAttribute("Manager_latency",   p_Manager->latency);
 	xml->setAttribute("Manager_latency_mean",   p_Manager->latency_mean);
+	xml->setAttribute("Manager_dryWetValue",   p_Manager->dryWetValue);
 	processor->copyXmlToBinary(*xml, destData);
 
 //	mtx_params.unlock();
@@ -592,6 +647,10 @@ void Parameters::Load_parameters(string name_params, Processor * processor, cons
 	   if(processor->p_com != nullptr)
 		   processor->p_com->Met_a_jour_Manager_latency_mean(); // -> widget variable
         //cout<<"      load     value   p_Manager->latency_mean   = "<<   p_Manager->latency_mean <<endl;
+	   p_Manager->dryWetValue  =  xmlState->getDoubleAttribute ("Manager_dryWetValue", 0.0f); // name, default value if not found
+	   //if(processor->p_com != nullptr)
+		   //processor->p_com->Met_a_jour_Manager_dryWetValue(); // -> widget variable
+        //cout<<"      load     value   p_Manager->dryWetValue   = "<<   p_Manager->dryWetValue <<endl;
         }// if xmlState
 
 //	mtx_params.unlock();

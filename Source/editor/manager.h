@@ -69,8 +69,9 @@ public:
 	int N_latency = 0; 
 	double  S_latency = 0; 
 
+	float dryWetValue = 0.0f; // make_gui = HS(ZT("Monitor"), 0, 1, 0.01f, "dryWetValue") help ="mix l'audio traité avec l'audio brut"
 
-	
+
 //----To detect leak memory---------------
 	JUCE_LEAK_DETECTOR (Manager)
 };

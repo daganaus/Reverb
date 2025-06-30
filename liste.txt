@@ -1,12 +1,12 @@
 
 0 : Source/editor/PluginEditor.cc
- 1 : /home/faure/c++/musique/JUCE_fred/Template/Source/processor/PluginProcessor.h
- 2 : /home/faure/c++/musique/JUCE_fred/Template/Source/processor/PluginProcessor.cc
- 3 : /home/faure/c++/musique/JUCE_fred/Template/Source/editor/PluginEditor.h
- 4 : /home/faure/c++/musique/JUCE_fred/Template/Source/editor/PluginEditor.cc
- 5 : /home/faure/c++/musique/JUCE_fred/Template/Source/com.h
- 6 : /home/faure/c++/musique/JUCE_fred/Template/Source/com.cc
- 7 : /home/faure/c++/musique/JUCE_fred/Template/Source/JuceHeader.h
- 7 : /home/faure/c++/musique/JUCE_fred/Template/Source/editor/manager.h
- 8 : /home/faure/c++/musique/JUCE_fred/Template/Source/editor/manager.cc
+ 1 : /home/swann/Stage_ffaure/Reverb/Source/processor/PluginProcessor.h
+ 2 : /home/swann/Stage_ffaure/Reverb/Source/processor/PluginProcessor.cc
+ 3 : /home/swann/Stage_ffaure/Reverb/Source/editor/PluginEditor.h
+ 4 : /home/swann/Stage_ffaure/Reverb/Source/editor/PluginEditor.cc
+ 5 : /home/swann/Stage_ffaure/Reverb/Source/com.h
+ 6 : /home/swann/Stage_ffaure/Reverb/Source/com.cc
+ 7 : /home/swann/Stage_ffaure/Reverb/Source/JuceHeader.h
+ 7 : /home/swann/Stage_ffaure/Reverb/Source/editor/manager.h
+ 8 : /home/swann/Stage_ffaure/Reverb/Source/editor/manager.cc
  

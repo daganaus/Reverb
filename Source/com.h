@@ -16,7 +16,7 @@ class ColourChangeButton;
 //extern mutex *mtx_com;
 
 class Manager;
-
+class Processor; 
 //===============================
 // override  design
 
@@ -44,7 +44,7 @@ class TCanvas_Manager_s_MM : public juce::DocumentWindow
 public:	
     Com * p_com = nullptr;
     CodeEditorComponent *p_editor = nullptr;
-	TCanvas_Manager_s_MM(Com *p_i, const juce::String &name, juce::Colour backgroundColour, int requiredButtons, bool addToDesktop=true);
+	TCanvas_Manager_s_MM(Com *p_i, const juce::String &name, juce::Colour backgroundColour, int requiredButtonsParam, bool addToDesktop=true);
 	~TCanvas_Manager_s_MM() override;
     Viewport viewport; // for scrolling properties
 
@@ -87,8 +87,8 @@ JUCE_LEAK_DETECTOR (Page_ZT_0)
 class Page_ZT_1 : public juce::Component 
 {
  public:
-   Page_ZT_1(Com *p_i);
-   ~Page_ZT_1();
+    Page_ZT_1(Com* p_i, Processor* proc);
+    ~Page_ZT_1();
 
     // resized() that is called once at the initialisation of the window and every time the window is resized by the user (if resizing is enabled).
     void resized() override;
@@ -100,6 +100,12 @@ class Page_ZT_1 : public juce::Component
     //------------
     juce::TabbedComponent *tab;
     CustomTabLookAndFeel customLookAndFeel;
+ private:
+    Processor *processor = nullptr;
+    std::unique_ptr<juce::Slider> managerDryWetValue;
+    std::unique_ptr<juce::Label> managerDryWetValueText;
+    std::unique_ptr<juce::Label> managerDryWetValueTexte;
+    std::unique_ptr<juce::SliderParameterAttachment> dryWetAttachment;
 
 //----To detect leak memory---------------
 JUCE_LEAK_DETECTOR (Page_ZT_1)
@@ -161,6 +167,11 @@ public:
     double Manager_latency_mean_x = 0; // value of the ProgressBar
     juce::Label *Manager_latency_mean_text;
     juce::Label *Manager_latency_mean_texte;
+
+	//-- from the instruction of class: Manager: 
+    // float dryWetValue = 0.0f; // make_gui = HS(ZT("Monitor"), 0, 1, 0.01f, "dryWetValue") help ="mix l'audio traité avec l'audio brut"
+
+    
   //--- list of unvisible objects (just for compilation)
 
 	//-- transfert of values --------
@@ -172,6 +183,8 @@ public:
     void Process_message_Manager_latency();  //  widget value --> c++ value
     void Met_a_jour_Manager_latency_mean();  //  c++ value --> widget value
     void Process_message_Manager_latency_mean();  //  widget value --> c++ value
+    //void Met_a_jour_Manager_dryWetValue();  //  c++ value --> widget value
+    //void Process_message_Manager_dryWetValue();  //  widget value --> c++ value
 
 	//--Idem for unvisible widgets:  empty functions  --------
 
@@ -184,7 +197,7 @@ JUCE_LEAK_DETECTOR (Com)
 Parameters of the plugin
 */
 
-class Processor; 
+
 
 class Parameters
 {
